@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="movie_details_activity_title"></string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="title_movie_details">Movie Details</string>
+    <string name="movie_backdrop">Movie Backdrop</string>
+
+    <string name="loading">Loading...</string>
+    <string name="movie_synopsis">Movie Synopsis</string>
+    <string name="action_filter">Filter</string>
+    <string name="action_filter_popular">Popular</string>
+    <string name="action_filter_top_rated">Top Rated</string>
+
+    <string name="average_placeholder">%1$s/10</string>
+
+    <string name="no_internet">
+        No Internet Connection! Please, turn on your Wi-Fi or cellular data and try again.
+    </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="movie_overview">Overview Text</string>
+    <string name="movie_release_date">Date</string>
+    <string name="movie_vote_average">Votes</string>
+    <string name="connection_error">Problem to Fetch Data!</string>
+    <string name="try_again">Try Again</string>
+
+</resources>

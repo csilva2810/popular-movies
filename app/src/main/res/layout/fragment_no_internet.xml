@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical|center_horizontal"
+    android:padding="@dimen/no_internet_activity_padding"
+    tools:context=".fragments.NoInternetFragment">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_cloud_off_black_56dp" />
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/no_internet_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        style="@style/TextAppearance.AppCompat.Medium"
+        android:text="@string/no_internet" />
+
+    <Button
+        android:id="@+id/button_try_again"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/try_again"
+        style="@style/Widget.AppCompat.Button.Colored" />
+
+</LinearLayout>
