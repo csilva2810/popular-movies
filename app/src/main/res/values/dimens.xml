@@ -1,0 +1,28 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_horizontal_padding">16dp</dimen>
+    <dimen name="activity_vertical_padding">16dp</dimen>
+    <dimen name="gridview_vertical_spacing">4dp</dimen>
+    <dimen name="gridview_horizontal_spacing">4dp</dimen>
+
+    <!-- CardViews Dimensions -->
+    <dimen name="cardview_elevation">4dp</dimen>
+    <dimen name="cardview_tile_height">48dp</dimen>
+    <dimen name="cardview_tile_padding">16dp</dimen>
+    <dimen name="cardview_tile_textSize">16sp</dimen>
+    <dimen name="cardview_height">250dp </dimen>
+    <dimen name="cardview_padding">10dp</dimen>
+    <dimen name="gridlist_padding">6dp</dimen>
+
+    <!-- toolbars -->
+    <dimen name="toolbar_elevation">4dp</dimen>
+    <dimen name="movie_backdrop_height">250dp</dimen>
+    <dimen name="icon_margin">10dp</dimen>
+
+    <!-- divider -->
+    <dimen name="divider_margin">8dp</dimen>
+    <dimen name="no_internet_activity_padding">16dp</dimen>
+    <dimen name="movie_details_padding">8dp</dimen>
+</resources>
