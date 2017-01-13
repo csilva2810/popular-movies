@@ -5,7 +5,6 @@ package csilva2810.udacity.com.popularmovies.constants;
  */
 public class MoviesApi {
 
-        public static final String KEY = "fe8cbe30b8952d0cdf813996f6a222da";
         public static final String SCHEME = "https";
         public static final String URL = "api.themoviedb.org/3";
 
