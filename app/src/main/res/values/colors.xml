@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="blue_500">#2196F3</color>
+    <color name="blue_700">#1976D2</color>
+    <color name="purple_A200">#7C4DFF</color>
+
+    <color name="cardview_tile_background">#66000000</color>
+    <color name="cardview_background">#FFe5e5e5</color>
+    <color name="gridview_background">#EEEEEE</color>
+    <color name="icon_color">#555555</color>
+
+    <color name="colorPrimaryRipple">#992196f3</color>
+
+</resources>

@@ -1,0 +1,44 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/blue_500</item>
+        <item name="colorPrimaryDark">@color/blue_700</item>
+        <item name="colorAccent">@color/purple_A200</item>
+    </style>
+    
+    <style name="MyCardView" parent="Base.CardView">
+        <item name="cardUseCompatPadding">true</item>
+        <item name="cardPreventCornerOverlap">true</item>
+        <item name="android:padding">@dimen/cardview_padding</item>
+        <item name="android:background">@color/cardview_background</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="CardViewTile">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/cardview_tile_height</item>
+        <item name="android:padding">@dimen/cardview_tile_padding</item>
+        <item name="android:textSize">@dimen/cardview_tile_textSize</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@color/cardview_tile_background</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:layout_gravity">bottom</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:src">@drawable/divider</item>
+        <item name="android:layout_marginTop">@dimen/divider_margin</item>
+        <item name="android:layout_marginBottom">@dimen/divider_margin</item>
+    </style>
+
+    <style name="AutoWidth">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+</resources>

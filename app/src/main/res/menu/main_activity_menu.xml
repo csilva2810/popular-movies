@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+    <item android:id="@+id/action_movie_filter"
+        android:title="@string/action_filter"
+        android:icon="@drawable/ic_filter_list_white_24dp"
+        app:showAsAction="ifRoom|withText">
+
+        <menu>
+            <item
+                android:id="@+id/action_filter_popular"
+                android:title="@string/action_filter_popular" />
+            <item
+                android:id="@+id/action_filter_top_rated"
+                android:title="@string/action_filter_top_rated" />
+        </menu>
+    </item>
+
+</menu>
