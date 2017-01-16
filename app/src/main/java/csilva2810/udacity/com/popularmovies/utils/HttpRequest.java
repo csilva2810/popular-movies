@@ -16,6 +16,8 @@ public class HttpRequest {
 
     public static String getJson(URL url) {
 
+        Log.d(LOG_TAG, "Url: " + url);
+
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         String responseJson = null;

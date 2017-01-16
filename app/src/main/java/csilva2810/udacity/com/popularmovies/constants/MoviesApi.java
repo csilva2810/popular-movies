@@ -6,7 +6,10 @@ package csilva2810.udacity.com.popularmovies.constants;
 public class MoviesApi {
 
         public static final String SCHEME = "https";
-        public static final String URL = "api.themoviedb.org/3";
+        public static final String AUTHORITY = "api.themoviedb.org/3";
+
+        public static final String REVIEWS_PATH = "reviews";
+        public static final String VIDEOS_PATH = "videos";
 
         public static final String MOVIE_POPULAR = "popular";
         public static final String MOVIE_TOP_RATED = "top_rated";

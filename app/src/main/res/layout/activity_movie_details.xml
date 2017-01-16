@@ -61,25 +61,24 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_padding"
-            android:paddingBottom="@dimen/activity_vertical_padding"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="@dimen/cardview_padding"
+                android:paddingTop="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
 
-                    <ImageView
-                        style="@style/AutoWidth"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_grade_black_24dp" />
+                <ImageView
+                    style="@style/AutoWidth"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_grade_black_24dp" />
 
-                    <ImageView
-                        style="@style/AutoWidth"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_event_black_24dp" />
+                <ImageView
+                    style="@style/AutoWidth"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_event_black_24dp" />
 
             </LinearLayout>
 
@@ -126,6 +125,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/movie_overview" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_padding"
+                android:paddingRight="@dimen/activity_horizontal_padding"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Vídeos"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/videos_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
