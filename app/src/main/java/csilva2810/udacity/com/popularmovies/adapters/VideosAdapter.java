@@ -1,6 +1,9 @@
 package csilva2810.udacity.com.popularmovies.adapters;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
 import android.util.Log;
@@ -33,6 +36,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
 
     class VideosViewHolder extends RecyclerView.ViewHolder {
 
+        String videoKey;
         TextView videoName;
 
         VideosViewHolder(View itemView) {
@@ -43,7 +47,14 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(mContext, videoName.getText(), Toast.LENGTH_SHORT).show();
+                    Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoKey));
+                    Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://www.youtube.com/watch?v=" + videoKey));
+                    try {
+                        mContext.startActivity(appIntent);
+                    } catch (ActivityNotFoundException ex) {
+                        mContext.startActivity(webIntent);
+                    }
                 }
             });
         }
@@ -61,6 +72,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
 
         Video video = mVideosList.get(position);
         holder.videoName.setText(video.getName());
+        holder.videoKey = video.getKey();
 
     }
 
