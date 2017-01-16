@@ -3,8 +3,6 @@ package csilva2810.udacity.com.popularmovies.fragments;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,11 +18,11 @@ import csilva2810.udacity.com.popularmovies.adapters.MoviesAdapter;
 import csilva2810.udacity.com.popularmovies.constants.App;
 import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
 import csilva2810.udacity.com.popularmovies.services.RequestMoviesTask;
-import csilva2810.udacity.com.popularmovies.utils.AsynkTaskDelegate;
+import csilva2810.udacity.com.popularmovies.utils.AsyncTaskDelegate;
 import csilva2810.udacity.com.popularmovies.models.Movie;
 import csilva2810.udacity.com.popularmovies.R;
 
-public class MoviesGridFragment extends Fragment implements AsynkTaskDelegate {
+public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
 
     private static final String LOG_TAG = MoviesGridFragment.class.getSimpleName();
     private static final String FRAGMENT_STATE = "fragment_state";
@@ -86,7 +84,7 @@ public class MoviesGridFragment extends Fragment implements AsynkTaskDelegate {
     }
 
     @Override
-    public void onProcessFinish(Object output) {
+    public void onProcessFinish(Object output, String taskType) {
         hideSpinner();
         if (output != null) {
             List<Movie> movies = (List<Movie>) output;

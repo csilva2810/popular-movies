@@ -8,7 +8,10 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,11 +22,17 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
+import csilva2810.udacity.com.popularmovies.adapters.VideosAdapter;
+import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
 import csilva2810.udacity.com.popularmovies.models.Movie;
+import csilva2810.udacity.com.popularmovies.models.Video;
+import csilva2810.udacity.com.popularmovies.services.VideoTask;
+import csilva2810.udacity.com.popularmovies.utils.AsyncTaskDelegate;
 import csilva2810.udacity.com.popularmovies.utils.ColorUtils;
 
-public class MovieDetailsActivity extends AppCompatActivity {
+public class MovieDetailsActivity extends AppCompatActivity implements AsyncTaskDelegate {
 
     private static final String LOG_TAG = MovieDetailsActivity.class.getSimpleName();
     private Toolbar mToolbar;
@@ -32,6 +41,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private TextView mMovieVoteAverage, mMovieReleaseDate, mMovieOverview;
     private Bitmap mBitmap;
     private Target mTarget;
+    private RecyclerView mVideosRecyclerView;
+    private VideosAdapter mVideosAdapter;
+    private List<Video> mVideosList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +55,17 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
 
+        mVideosRecyclerView = (RecyclerView) findViewById(R.id.videos_recyclerview);
+        mVideosRecyclerView.setHasFixedSize(true);
+
+        int gridColumns = 1;
+        GridLayoutManager layoutManager = new GridLayoutManager(MovieDetailsActivity.this, gridColumns);
+        mVideosRecyclerView.setLayoutManager(layoutManager);
+        mVideosRecyclerView.setAdapter(new VideosAdapter(MovieDetailsActivity.this, mVideosList));
+
         Intent intent = getIntent();
         if (intent.hasExtra(Movie.EXTRA_MOVIE)) {
+
             Movie movie = intent.getParcelableExtra(Movie.EXTRA_MOVIE);
 
             mTarget = new Target() {
@@ -74,6 +95,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
             mMovieOverview.setText(movie.getOverview());
 
             mCollapsingToolbar.setTitle(movie.getTitle());
+
+            new VideoTask(MovieDetailsActivity.this).execute(String.valueOf(movie.getId()));
 
         }
 
@@ -126,4 +149,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onProcessFinish(Object output, String taskType) {
+        mVideosList = (List<Video>) output;
+        Log.d(LOG_TAG, "onProcessFinish: " + mVideosList.toString());
+        switch (taskType) {
+            case MoviesApi.VIDEOS_PATH:
+                mVideosAdapter = new VideosAdapter(MovieDetailsActivity.this, mVideosList);
+                mVideosRecyclerView.setAdapter(mVideosAdapter);
+                mVideosAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
 }
