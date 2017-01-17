@@ -25,4 +25,5 @@
     <dimen name="divider_margin">8dp</dimen>
     <dimen name="no_internet_activity_padding">16dp</dimen>
     <dimen name="movie_details_padding">8dp</dimen>
+    <dimen name="review_author_name_height">48dp</dimen>
 </resources>

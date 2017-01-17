@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -55,7 +56,8 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:isScrollContainer="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -114,9 +116,9 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="@string/movie_synopsis"
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
@@ -124,9 +126,23 @@
                     android:id="@+id/movie_overview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="@string/movie_overview" />
 
+                <TextView
+                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="@string/videos_title"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
             </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/videos_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -140,15 +156,16 @@
                     android:layout_marginBottom="@dimen/activity_horizontal_margin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Vídeos"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                    android:text="@string/reviews_title" />
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/videos_recyclerview"
+                    android:id="@+id/reviews_recyclerview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
+
 
         </LinearLayout>
 
