@@ -5,22 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import csilva2810.udacity.com.popularmovies.R;
 import csilva2810.udacity.com.popularmovies.models.Video;
-
-/**
- * Created by carlinhos on 1/15/17.
- */
 
 public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosViewHolder> {
 
@@ -37,26 +34,29 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
     class VideosViewHolder extends RecyclerView.ViewHolder {
 
         String videoKey;
+        ImageView videoThumbnail;
         TextView videoName;
 
         VideosViewHolder(View itemView) {
             super(itemView);
 
+            videoThumbnail = (ImageView) itemView.findViewById(R.id.video_image_thumb);
             videoName = (TextView) itemView.findViewById(R.id.video_name_textview);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoKey));
-                    Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                    Intent youtubeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoKey));
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
                             Uri.parse("http://www.youtube.com/watch?v=" + videoKey));
                     try {
-                        mContext.startActivity(appIntent);
+                        mContext.startActivity(youtubeIntent);
                     } catch (ActivityNotFoundException ex) {
-                        mContext.startActivity(webIntent);
+                        mContext.startActivity(browserIntent);
                     }
                 }
             });
+
         }
 
     }
@@ -70,9 +70,14 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
     @Override
     public void onBindViewHolder(VideosAdapter.VideosViewHolder holder, int position) {
 
-        Video video = mVideosList.get(position);
-        holder.videoName.setText(video.getName());
-        holder.videoKey = video.getKey();
+        if (mVideosList != null) {
+            Video video = mVideosList.get(position);
+            holder.videoName.setText(video.getName());
+            holder.videoKey = video.getKey();
+
+            String thumbUrl = "https://img.youtube.com/vi/" + holder.videoKey + "/maxresdefault.jpg";
+            Picasso.with(mContext).load(thumbUrl).into(holder.videoThumbnail);
+        }
 
     }
 

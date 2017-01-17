@@ -25,5 +25,10 @@
     <string name="movie_vote_average">Votes</string>
     <string name="connection_error">Problem to Fetch Data!</string>
     <string name="try_again">Try Again</string>
+    <string name="videos_title">Vídeos</string>
+    <string name="reviews_title">Reviews</string>
+    <string name="review_read_more">Read More</string>
+
+    <string name="no_reviews_message">No Reviews Found!</string>
 
 </resources>
