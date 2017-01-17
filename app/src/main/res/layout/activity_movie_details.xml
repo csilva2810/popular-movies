@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/my_appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
@@ -52,7 +52,17 @@
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
+
     </android.support.design.widget.AppBarLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        style="@style/Widget.Design.FloatingActionButton"
+        app:fabSize="normal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_gravity="bottom|right|end"
+        android:src="@drawable/ic_star_border_24dp" />
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -68,9 +78,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:paddingBottom="@dimen/cardview_padding"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:orientation="horizontal">
+                android:paddingTop="@dimen/activity_vertical_margin">
 
                 <ImageView
                     style="@style/AutoWidth"
@@ -87,19 +97,19 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/cardview_padding"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/cardview_padding">
 
                 <TextView
-                    style="@style/AutoWidth"
                     android:id="@+id/movie_vote_average"
+                    style="@style/AutoWidth"
                     android:layout_height="wrap_content"
                     android:text="@string/movie_vote_average"
                     android:textAlignment="center" />
 
                 <TextView
-                    style="@style/AutoWidth"
                     android:id="@+id/movie_release_date"
+                    style="@style/AutoWidth"
                     android:layout_height="wrap_content"
                     android:text="@string/movie_release_date"
                     android:textAlignment="center" />
@@ -111,9 +121,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:paddingLeft="@dimen/activity_horizontal_padding"
-                android:paddingRight="@dimen/activity_horizontal_padding"
-                android:orientation="vertical">
+                android:paddingRight="@dimen/activity_horizontal_padding">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -130,9 +140,9 @@
                     android:text="@string/movie_overview" />
 
                 <TextView
-                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="@string/videos_title"
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
@@ -148,16 +158,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:orientation="vertical"
                 android:paddingLeft="@dimen/activity_horizontal_padding"
-                android:paddingRight="@dimen/activity_horizontal_padding"
-                android:orientation="vertical">
+                android:paddingRight="@dimen/activity_horizontal_padding">
 
                 <TextView
-                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                    android:text="@string/reviews_title" />
+                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                    android:text="@string/reviews_title"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/reviews_recyclerview"
