@@ -1,20 +1,24 @@
 package csilva2810.udacity.com.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -28,6 +32,8 @@ import java.util.List;
 import csilva2810.udacity.com.popularmovies.adapters.ReviewsAdapter;
 import csilva2810.udacity.com.popularmovies.adapters.VideosAdapter;
 import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
+import csilva2810.udacity.com.popularmovies.database.MovieContract;
+import csilva2810.udacity.com.popularmovies.database.MovieDbHelper;
 import csilva2810.udacity.com.popularmovies.models.Movie;
 import csilva2810.udacity.com.popularmovies.models.Review;
 import csilva2810.udacity.com.popularmovies.models.Video;
@@ -35,6 +41,7 @@ import csilva2810.udacity.com.popularmovies.services.ReviewTask;
 import csilva2810.udacity.com.popularmovies.services.VideoTask;
 import csilva2810.udacity.com.popularmovies.utils.AsyncTaskDelegate;
 import csilva2810.udacity.com.popularmovies.utils.ColorUtils;
+import csilva2810.udacity.com.popularmovies.utils.DateUtils;
 
 public class MovieDetailsActivity extends AppCompatActivity implements AsyncTaskDelegate {
 
@@ -51,7 +58,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements AsyncTask
 
         mCollapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         Toolbar toolbar = (Toolbar) findViewById(R.id.movie_details_toolbar);
-
         setSupportActionBar(toolbar);
 
         mVideosRecyclerView = (RecyclerView) findViewById(R.id.videos_recyclerview);
@@ -71,7 +77,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements AsyncTask
         Intent intent = getIntent();
         if (intent.hasExtra(Movie.EXTRA_MOVIE)) {
 
-            Movie movie = intent.getParcelableExtra(Movie.EXTRA_MOVIE);
+            final Movie movie = intent.getParcelableExtra(Movie.EXTRA_MOVIE);
 
             Target target = new Target() {
                 @Override
@@ -100,6 +106,44 @@ public class MovieDetailsActivity extends AppCompatActivity implements AsyncTask
             movieOverviewTextView.setText(movie.getOverview());
 
             mCollapsingToolbar.setTitle(movie.getTitle());
+
+            FloatingActionButton fabAddFavorite =
+                    (FloatingActionButton) findViewById(R.id.fab_add_as_favorite);
+            fabAddFavorite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    MovieDbHelper dbHelper = new MovieDbHelper(MovieDetailsActivity.this);
+                    SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+                    ContentValues cv = new ContentValues();
+                    cv.put(MovieContract.MovieEntry.COLUMN_API_ID, movie.getId());
+                    cv.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
+                    cv.put(MovieContract.MovieEntry.COLUMN_POSTER, movie.getPosterImage());
+                    cv.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+                    cv.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
+                    cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
+                            DateUtils.dateInMillis(movie.getReleaseDate()));
+
+                    long insert = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, cv);
+                    if (insert != -1) {
+                        Toast.makeText(
+                                MovieDetailsActivity.this,
+                                "Movie " + movie.getTitle() + " is now one of your favorites!",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    } else {
+                        Toast.makeText(
+                                MovieDetailsActivity.this,
+                                "Insert Error!",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    }
+
+                    Log.d(LOG_TAG, "FAB: " + cv.toString());
+
+                }
+            });
 
             new VideoTask(MovieDetailsActivity.this).execute(String.valueOf(movie.getId()));
             new ReviewTask(MovieDetailsActivity.this).execute(String.valueOf(movie.getId()));
