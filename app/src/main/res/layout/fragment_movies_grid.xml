@@ -12,20 +12,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/movies_grid_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical" />
-
-    <FrameLayout
-        android:id="@+id/no_internet_fragment"
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
-
-        <fragment
-            android:name="csilva2810.udacity.com.popularmovies.fragments.NoInternetFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </FrameLayout>
+        android:scrollbars="vertical" />
 
 </LinearLayout>
