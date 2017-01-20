@@ -7,7 +7,7 @@
 
     <item android:id="@+id/action_movie_filter"
         android:title="@string/action_filter"
-        android:icon="@drawable/ic_filter_list_white_24dp"
+        android:icon="@drawable/ic_filter_list_24dp"
         app:showAsAction="ifRoom|withText">
 
         <menu>
@@ -17,7 +17,11 @@
             <item
                 android:id="@+id/action_filter_top_rated"
                 android:title="@string/action_filter_top_rated" />
+            <item
+                android:id="@+id/action_filter_favorites"
+                android:title="@string/action_filter_favorites" />
         </menu>
+
     </item>
 
 </menu>

@@ -11,6 +11,7 @@
     <string name="action_filter">Filter</string>
     <string name="action_filter_popular">Popular</string>
     <string name="action_filter_top_rated">Top Rated</string>
+    <string name="action_filter_favorites">Favorites</string>
 
     <string name="average_placeholder">%1$s/10</string>
 

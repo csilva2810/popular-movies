@@ -17,10 +17,12 @@ import csilva2810.udacity.com.popularmovies.MainActivity;
 import csilva2810.udacity.com.popularmovies.adapters.MoviesAdapter;
 import csilva2810.udacity.com.popularmovies.constants.App;
 import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
+import csilva2810.udacity.com.popularmovies.decorators.GridSpacingItemDecoration;
 import csilva2810.udacity.com.popularmovies.services.RequestMoviesTask;
 import csilva2810.udacity.com.popularmovies.utils.AsyncTaskDelegate;
 import csilva2810.udacity.com.popularmovies.models.Movie;
 import csilva2810.udacity.com.popularmovies.R;
+import csilva2810.udacity.com.popularmovies.utils.ConversionUtils;
 
 public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
 
@@ -44,6 +46,9 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
 
         mGridLayoutManager = new GridLayoutManager(getActivity(), gridColumns);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
+        mRecyclerView.addItemDecoration(
+                new GridSpacingItemDecoration(2, ConversionUtils.dpToPx(getActivity(), 5), true)
+        );
 
         requestMovies();
 
@@ -72,7 +77,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
         String movieFilter = sp.getString(App.SHARED_KEY_MOVIE_FILTER, MoviesApi.MOVIE_POPULAR);
 
         showSpinner();
-        new RequestMoviesTask(MoviesGridFragment.this).execute(movieFilter);
+        new RequestMoviesTask(getActivity(), MoviesGridFragment.this).execute(movieFilter);
 
     }
 

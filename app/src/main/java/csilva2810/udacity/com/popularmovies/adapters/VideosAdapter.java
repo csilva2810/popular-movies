@@ -34,13 +34,14 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
     class VideosViewHolder extends RecyclerView.ViewHolder {
 
         String videoKey;
-        ImageView videoThumbnail;
+        ImageView videoThumbnail, shareIcon;
         TextView videoName;
 
         VideosViewHolder(View itemView) {
             super(itemView);
 
             videoThumbnail = (ImageView) itemView.findViewById(R.id.video_image_thumb);
+            shareIcon = (ImageView) itemView.findViewById(R.id.video_share_icon);
             videoName = (TextView) itemView.findViewById(R.id.video_name_textview);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -57,6 +58,17 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
                 }
             });
 
+            shareIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, "http://youtube.com/watch?v=" + videoKey);
+                    shareIntent.setType("text/plain");
+                    mContext.startActivity(shareIntent);
+                }
+            });
+
         }
 
     }
@@ -65,18 +77,28 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
         View view =
                 LayoutInflater.from(mContext).inflate(R.layout.videos_list_item, parent, false);
         return new VideosAdapter.VideosViewHolder(view);
+
     }
 
     @Override
     public void onBindViewHolder(VideosAdapter.VideosViewHolder holder, int position) {
+
+        if (position == 0) {
+            Log.d(LOG_TAG, "Position: " + position);
+            holder.itemView.setPadding(16, 0, 0, 0);
+        }
 
         if (mVideosList != null) {
             Video video = mVideosList.get(position);
             holder.videoName.setText(video.getName());
             holder.videoKey = video.getKey();
 
-            String thumbUrl = "https://img.youtube.com/vi/" + holder.videoKey + "/maxresdefault.jpg";
+            // possible sizes (default, hqdefault, mqdefault, sddefault, maxresdefault)
+
+            String thumbUrl = "https://img.youtube.com/vi/" + holder.videoKey + "/sddefault.jpg";
             Picasso.with(mContext).load(thumbUrl).into(holder.videoThumbnail);
+
+            Log.d(LOG_TAG, thumbUrl);
         }
 
     }

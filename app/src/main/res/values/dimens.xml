@@ -26,4 +26,11 @@
     <dimen name="no_internet_activity_padding">16dp</dimen>
     <dimen name="movie_details_padding">8dp</dimen>
     <dimen name="review_author_name_height">48dp</dimen>
+    <dimen name="card_view_action_padding">8dp</dimen>
+
+    <!-- video_item -->
+    <dimen name="video_item_width">300dp</dimen>
+    <dimen name="video_thumb_height">125dp</dimen>
+    <dimen name="collapsing_toolbar_margin">48dp</dimen>
+
 </resources>

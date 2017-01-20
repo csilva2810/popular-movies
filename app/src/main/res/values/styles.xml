@@ -20,11 +20,12 @@
     <style name="CardViewTile">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/cardview_tile_height</item>
-        <item name="android:padding">@dimen/cardview_tile_padding</item>
+        <item name="android:paddingLeft">@dimen/cardview_tile_padding</item>
+        <item name="android:paddingRight">@dimen/cardview_tile_padding</item>
         <item name="android:textSize">@dimen/cardview_tile_textSize</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:background">@color/cardview_tile_background</item>
-        <item name="android:gravity">bottom</item>
+        <item name="android:background">@drawable/card_view_tile</item>
+        <item name="android:gravity">center_vertical</item>
         <item name="android:layout_gravity">bottom</item>
     </style>
 

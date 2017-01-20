@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gridview_background">
+    android:background="@color/gridview_background"
+    android:orientation="vertical">
 
     <include
-        layout="@layout/spinner_progress"
-        android:id="@+id/spinner_progress" />
+        android:id="@+id/spinner_progress"
+        layout="@layout/spinner_progress" />
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/movies_grid_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:id="@+id/movies_grid_recyclerview" />
+        android:scrollbars="vertical" />
+
+    <FrameLayout
+        android:id="@+id/no_internet_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <fragment
+            android:name="csilva2810.udacity.com.popularmovies.fragments.NoInternetFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
 
 </LinearLayout>
