@@ -1,6 +1,7 @@
 package csilva2810.udacity.com.popularmovies.models;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import csilva2810.udacity.com.popularmovies.constants.App;
 import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
+import csilva2810.udacity.com.popularmovies.database.MovieContract;
 
 /**
  * Created by carlinhos on 12/8/16.
@@ -24,7 +26,7 @@ public class Movie implements Parcelable {
     public static final String EXTRA_MOVIE = App.PACKAGE_NAME + ".EXTRA_MOVIE";
     private static final String LOG_TAG = Movie.class.getSimpleName();
 
-    private int id;
+    private long id;
     private String title;
     private String posterImage;
     private String backdropImage;
@@ -32,7 +34,7 @@ public class Movie implements Parcelable {
     private double voteAverage;
     private String releaseDate;
 
-    public Movie(int id, String title, String posterImage, String backdropImage, String overview, double voteAverage, String releaseDate) {
+    public Movie(long id, String title, String posterImage, String backdropImage, String overview, double voteAverage, String releaseDate) {
         this.id = id;
         this.title = title;
         this.posterImage = posterImage;
@@ -43,7 +45,7 @@ public class Movie implements Parcelable {
     }
 
     public Movie(Parcel movie) {
-        this.id = movie.readInt();
+        this.id = movie.readLong();
         this.title = movie.readString();
         this.posterImage = movie.readString();
         this.backdropImage = movie.readString();
@@ -60,11 +62,11 @@ public class Movie implements Parcelable {
         this.backdropImage = backdropImage;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -108,6 +110,14 @@ public class Movie implements Parcelable {
         this.releaseDate = releaseDate;
     }
 
+    @Override
+    public String toString() {
+        return  this.getId() + " - " +
+                this.getTitle() + " - " +
+                this.getBackdropImage() + " - " +
+                this.getPosterImage();
+    }
+
     public static List<Movie> parseJson(String json) {
         List<Movie> movies = new ArrayList<>();
 
@@ -139,6 +149,51 @@ public class Movie implements Parcelable {
         return movies;
     }
 
+    public static List<Movie> getFavorites(Context context) {
+        String columns[] = new String[] {
+                MovieContract.MovieEntry.COLUMN_API_ID,
+                MovieContract.MovieEntry.COLUMN_TITLE,
+                MovieContract.MovieEntry.COLUMN_POSTER,
+                MovieContract.MovieEntry.COLUMN_BACKDROP,
+                MovieContract.MovieEntry.COLUMN_OVERVIEW,
+                MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+                MovieContract.MovieEntry.COLUMN_RELEASE_DATE
+        };
+        final int INDEX_API_ID = 0;
+        final int INDEX_TITLE = 1;
+        final int INDEX_POSTER = 2;
+        final int INDEX_BACKDROP = 3;
+        final int INDEX_OVERVIEW = 4;
+        final int INDEX_VOTE_AVERAGE = 5;
+        final int INDEX_RELEASE_DATE = 6;
+
+        List<Movie> movies = new ArrayList<>();
+        Cursor c = context.getContentResolver().query(
+                MovieContract.MovieEntry.getMovieUri(),
+                columns, null, null, null
+        );
+
+        if (c == null) {
+            return null;
+        }
+
+        while (c.moveToNext()) {
+            final Movie movie = new Movie(
+                    c.getLong(INDEX_API_ID),
+                    c.getString(INDEX_TITLE),
+                    c.getString(INDEX_POSTER),
+                    c.getString(INDEX_BACKDROP),
+                    c.getString(INDEX_OVERVIEW),
+                    c.getDouble(INDEX_VOTE_AVERAGE),
+                    c.getString(INDEX_RELEASE_DATE)
+            );
+            Log.d(LOG_TAG, "Movie: " + movie.toString());
+            movies.add(movie);
+        }
+
+        return movies;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -146,7 +201,7 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeLong(id);
         dest.writeString(title);
         dest.writeString(posterImage);
         dest.writeString(backdropImage);

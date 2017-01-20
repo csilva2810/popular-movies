@@ -2,14 +2,16 @@ package csilva2810.udacity.com.popularmovies;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +20,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -33,7 +34,7 @@ import csilva2810.udacity.com.popularmovies.adapters.ReviewsAdapter;
 import csilva2810.udacity.com.popularmovies.adapters.VideosAdapter;
 import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
 import csilva2810.udacity.com.popularmovies.database.MovieContract;
-import csilva2810.udacity.com.popularmovies.database.MovieDbHelper;
+import csilva2810.udacity.com.popularmovies.listeners.OnFragmentInteractionListener;
 import csilva2810.udacity.com.popularmovies.models.Movie;
 import csilva2810.udacity.com.popularmovies.models.Review;
 import csilva2810.udacity.com.popularmovies.models.Video;
@@ -43,13 +44,17 @@ import csilva2810.udacity.com.popularmovies.utils.AsyncTaskDelegate;
 import csilva2810.udacity.com.popularmovies.utils.ColorUtils;
 import csilva2810.udacity.com.popularmovies.utils.DateUtils;
 
-public class MovieDetailsActivity extends AppCompatActivity implements AsyncTaskDelegate {
+public class MovieDetailsActivity extends AppCompatActivity implements AsyncTaskDelegate,
+        OnFragmentInteractionListener {
 
     private static final String LOG_TAG = MovieDetailsActivity.class.getSimpleName();
     private CollapsingToolbarLayout mCollapsingToolbar;
     private ImageView mMovieCover;
     private Bitmap mBitmap;
     private RecyclerView mVideosRecyclerView, mReviewsRecyclerView;
+    private Movie mMovie;
+    private Toolbar mToolbar;
+    private boolean mIsFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +62,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements AsyncTask
         setContentView(R.layout.activity_movie_details);
 
         mCollapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.movie_details_toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.movie_details_toolbar);
+        setSupportActionBar(mToolbar);
 
         mVideosRecyclerView = (RecyclerView) findViewById(R.id.videos_recyclerview);
         mVideosRecyclerView.setHasFixedSize(true);
@@ -70,14 +75,17 @@ public class MovieDetailsActivity extends AppCompatActivity implements AsyncTask
         mReviewsRecyclerView = (RecyclerView) findViewById(R.id.reviews_recyclerview);
         mReviewsRecyclerView.setHasFixedSize(true);
         mReviewsRecyclerView.setLayoutManager(
-                new LinearLayoutManager(MovieDetailsActivity.this, LinearLayoutManager.VERTICAL,
-                        false)
+                new LinearLayoutManager(MovieDetailsActivity.this,
+                        LinearLayoutManager.VERTICAL, false)
         );
 
         Intent intent = getIntent();
         if (intent.hasExtra(Movie.EXTRA_MOVIE)) {
 
-            final Movie movie = intent.getParcelableExtra(Movie.EXTRA_MOVIE);
+            mMovie = intent.getParcelableExtra(Movie.EXTRA_MOVIE);
+            mIsFavorite = isFavorite(mMovie);
+
+            Log.d(LOG_TAG, "Movie: " + mMovie.toString());
 
             Target target = new Target() {
                 @Override
@@ -87,68 +95,139 @@ public class MovieDetailsActivity extends AppCompatActivity implements AsyncTask
                     setToolbarColor(mBitmap);
                 }
                 @Override
-                public void onBitmapFailed(Drawable errorDrawable) {}
+                public void onBitmapFailed(Drawable errorDrawable) {
+                    Log.d(LOG_TAG, "Load Failed: " + errorDrawable);
+                }
                 @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {}
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    Log.d(LOG_TAG, "Prepare Load: " + placeHolderDrawable);
+                }
             };
 
             mMovieCover = (ImageView) findViewById(R.id.movie_cover_imageview);
+            mMovieCover.setTag(target);
+            Picasso.with(MovieDetailsActivity.this).load(mMovie.getBackdropImage()).into(target);
+
             TextView voteAverageTextView = (TextView) findViewById(R.id.movie_vote_average);
-            TextView releaseDateTextView = (TextView) findViewById(R.id.movie_release_date);
-            TextView movieOverviewTextView = (TextView) findViewById(R.id.movie_overview);
-
-            Picasso.with(MovieDetailsActivity.this).load(movie.getBackdropImage()).into(target);
-
-            String voteAverage = getString(R.string.average_placeholder, String.valueOf(movie.getVoteAverage()));
+            String voteAverage = getString(R.string.average_placeholder, String.valueOf(mMovie.getVoteAverage()));
             voteAverageTextView.setText(voteAverage);
 
-            releaseDateTextView.setText(getDisplayDate(movie.getReleaseDate()));
-            movieOverviewTextView.setText(movie.getOverview());
+            TextView releaseDateTextView = (TextView) findViewById(R.id.movie_release_date);
+            releaseDateTextView.setText(getDisplayDate(mMovie.getReleaseDate()));
 
-            mCollapsingToolbar.setTitle(movie.getTitle());
+            TextView movieOverviewTextView = (TextView) findViewById(R.id.movie_overview);
+            movieOverviewTextView.setText(mMovie.getOverview());
 
-            FloatingActionButton fabAddFavorite =
-                    (FloatingActionButton) findViewById(R.id.fab_add_as_favorite);
-            fabAddFavorite.setOnClickListener(new View.OnClickListener() {
+            mCollapsingToolbar.setTitle(mMovie.getTitle());
+
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_as_favorite);
+            toggleFabIcon(fab);
+            fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    MovieDbHelper dbHelper = new MovieDbHelper(MovieDetailsActivity.this);
-                    SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-                    ContentValues cv = new ContentValues();
-                    cv.put(MovieContract.MovieEntry.COLUMN_API_ID, movie.getId());
-                    cv.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
-                    cv.put(MovieContract.MovieEntry.COLUMN_POSTER, movie.getPosterImage());
-                    cv.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
-                    cv.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
-                    cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
-                            DateUtils.dateInMillis(movie.getReleaseDate()));
-
-                    long insert = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, cv);
-                    if (insert != -1) {
-                        Toast.makeText(
-                                MovieDetailsActivity.this,
-                                "Movie " + movie.getTitle() + " is now one of your favorites!",
-                                Toast.LENGTH_SHORT
-                        ).show();
+                    if (mIsFavorite) {
+                        removeFromFavorites(mMovie);
                     } else {
-                        Toast.makeText(
-                                MovieDetailsActivity.this,
-                                "Insert Error!",
-                                Toast.LENGTH_SHORT
-                        ).show();
+                        addToFavorites(mMovie);
                     }
-
-                    Log.d(LOG_TAG, "FAB: " + cv.toString());
-
+                    mIsFavorite = !mIsFavorite;
+                    toggleFabIcon((FloatingActionButton) view);
                 }
             });
 
-            new VideoTask(MovieDetailsActivity.this).execute(String.valueOf(movie.getId()));
-            new ReviewTask(MovieDetailsActivity.this).execute(String.valueOf(movie.getId()));
+            new VideoTask(MovieDetailsActivity.this).execute(String.valueOf(mMovie.getId()));
+            new ReviewTask(MovieDetailsActivity.this).execute(String.valueOf(mMovie.getId()));
 
         }
+
+    }
+
+    private void toggleFabIcon(FloatingActionButton fab) {
+        if (mIsFavorite) {
+            fab.setImageDrawable(
+                    ContextCompat.getDrawable(fab.getContext(), R.drawable.ic_star_24dp)
+            );
+        } else {
+            fab.setImageDrawable(
+                    ContextCompat.getDrawable(fab.getContext(), R.drawable.ic_star_border_24dp)
+            );
+        }
+    }
+
+    private boolean isFavorite(Movie movie) {
+
+        try {
+
+            Cursor cursor = getContentResolver().query(
+                    MovieContract.MovieEntry.getMovieWithIdUri(movie.getId()),
+                    new String[] {MovieContract.MovieEntry._ID},
+                    null,
+                    null,
+                    null
+            );
+
+            if (cursor == null) {
+                return false;
+            }
+
+            return cursor.getCount() > 0;
+
+        } catch (IllegalArgumentException e) {
+            Log.e(LOG_TAG, e.getMessage());
+            return false;
+        }
+
+    }
+
+    private boolean addToFavorites(final Movie movie) {
+
+        try {
+
+            ContentValues cv = new ContentValues();
+            cv.put(MovieContract.MovieEntry.COLUMN_API_ID, movie.getId());
+            cv.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
+            cv.put(MovieContract.MovieEntry.COLUMN_POSTER, movie.getPosterImage());
+            cv.put(MovieContract.MovieEntry.COLUMN_BACKDROP, movie.getBackdropImage());
+            cv.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+            cv.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
+            cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
+                    DateUtils.dateInMillis(movie.getReleaseDate()));
+
+            getContentResolver().insert(
+                    MovieContract.MovieEntry.getMovieUri(),
+                    cv
+            );
+
+            Log.d(LOG_TAG, "Inserted Movie: " + cv.toString());
+
+            return true;
+
+        } catch (IllegalArgumentException illegalException) {
+            Log.d(LOG_TAG, illegalException.getMessage());
+        } catch (android.database.SQLException sqlException) {
+            Log.d(LOG_TAG, sqlException.getMessage());
+        }
+
+        return false;
+
+    }
+
+    private boolean removeFromFavorites(final Movie movie) {
+
+        try {
+            int deletedRows = getContentResolver().delete(
+                    MovieContract.MovieEntry.getMovieUri(),
+                    MovieContract.MovieEntry.COLUMN_API_ID + " = ? ",
+                    new String[] { String.valueOf(movie.getId()) }
+            );
+            if (deletedRows > -1) {
+                return true;
+            }
+        } catch (IllegalArgumentException e) {
+            Log.d(LOG_TAG, e.getMessage());
+        }
+
+        return false;
 
     }
 
@@ -213,4 +292,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements AsyncTask
         }
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+    }
 }

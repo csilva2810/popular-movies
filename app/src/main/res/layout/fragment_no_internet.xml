@@ -10,7 +10,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_cloud_off_black_56dp" />
+        android:src="@drawable/ic_cloud_off_56dp" />
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

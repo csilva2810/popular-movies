@@ -1,44 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="300dp"
-    android:layout_height="wrap_content"
-    style="@style/MyCardView" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/MyCardView"
+    android:layout_width="@dimen/video_item_width"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/video_image_thumb"
-            android:layout_width="wrap_content"
-            android:layout_height="150dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/moviecover" />
-
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/listPreferredItemHeight"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/cardview_tile_padding"
-            android:paddingRight="@dimen/cardview_tile_padding">
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/video_image_thumb"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/video_thumb_height"
+                android:scaleType="centerCrop"
+                android:src="@drawable/moviecover" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/image_overlay" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_play_circle_filled_black_24dp"/>
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_play_circle_filled_white" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/cardview_tile_padding"
+            android:paddingRight="@dimen/cardview_tile_padding">
 
             <TextView
                 android:id="@+id/video_name_textview"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/activity_horizontal_padding"
-                android:text="Video Item" />
+                android:layout_gravity="center_vertical"
+                android:layout_weight="5"
+                android:gravity="center_vertical"
+                android:lines="2" />
+
+            <ImageButton
+                android:id="@+id/video_share_icon"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:tint="@color/button_grey"
+                app:srcCompat="@drawable/ic_share_black_24dp" />
 
         </LinearLayout>
-
 
     </LinearLayout>
 

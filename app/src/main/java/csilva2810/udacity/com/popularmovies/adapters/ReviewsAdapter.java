@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,21 +12,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import csilva2810.udacity.com.popularmovies.R;
 import csilva2810.udacity.com.popularmovies.models.Review;
 
-/**
- * Created by carlinhos on 1/16/17.
- */
-
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHolder> {
 
     private static String LOG_TAG = ReviewsAdapter.class.getSimpleName();
-    private static final int NO_ITEMS_VIEW = 0;
-    private static final int ITEM_VIEW = 1;
 
     private Context mContext;
     private List<Review> mReviewsList;
