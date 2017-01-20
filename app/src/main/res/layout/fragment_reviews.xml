@@ -13,6 +13,10 @@
         android:text="@string/reviews_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
+    <include
+        android:id="@+id/spinner_progress"
+        layout="@layout/spinner_progress" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/reviews_recyclerview"
         android:layout_width="match_parent"

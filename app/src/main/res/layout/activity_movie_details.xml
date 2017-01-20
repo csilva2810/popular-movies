@@ -26,17 +26,17 @@
             <ImageView
                 android:id="@+id/movie_cover_imageview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/collapsing_toolbar_imageview_height"
                 android:contentDescription="@string/movie_backdrop"
                 android:minHeight="@dimen/movie_backdrop_height"
                 android:scaleType="centerCrop"
-                android:src="@color/cardview_background"
+                android:src="@drawable/placeholder_image"
                 app:layout_collapseMode="parallax" />
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/image_scrim" />
+                android:src="@drawable/layout_image_scrim" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/movie_details_toolbar"
@@ -140,17 +140,15 @@
 
             </LinearLayout>
 
-            <fragment
-                android:name="csilva2810.udacity.com.popularmovies.fragments.VideosFragment"
+            <FrameLayout
                 android:id="@+id/videos_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent" />
 
-            <fragment
-                android:name="csilva2810.udacity.com.popularmovies.fragments.ReviewsFragment"
+            <FrameLayout
                 android:id="@+id/revies_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent" />
 
         </LinearLayout>
 

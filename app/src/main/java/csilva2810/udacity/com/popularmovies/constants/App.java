@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import csilva2810.udacity.com.popularmovies.MainActivity;
 import csilva2810.udacity.com.popularmovies.R;
 import csilva2810.udacity.com.popularmovies.fragments.NoInternetFragment;
 

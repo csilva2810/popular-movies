@@ -13,8 +13,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -24,37 +22,31 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import csilva2810.udacity.com.popularmovies.adapters.ReviewsAdapter;
-import csilva2810.udacity.com.popularmovies.adapters.VideosAdapter;
-import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
 import csilva2810.udacity.com.popularmovies.database.MovieContract;
+import csilva2810.udacity.com.popularmovies.fragments.ReviewsFragment;
+import csilva2810.udacity.com.popularmovies.fragments.VideosFragment;
 import csilva2810.udacity.com.popularmovies.listeners.OnFragmentInteractionListener;
 import csilva2810.udacity.com.popularmovies.models.Movie;
-import csilva2810.udacity.com.popularmovies.models.Review;
-import csilva2810.udacity.com.popularmovies.models.Video;
-import csilva2810.udacity.com.popularmovies.services.ReviewTask;
-import csilva2810.udacity.com.popularmovies.services.VideoTask;
-import csilva2810.udacity.com.popularmovies.utils.AsyncTaskDelegate;
 import csilva2810.udacity.com.popularmovies.utils.ColorUtils;
 import csilva2810.udacity.com.popularmovies.utils.DateUtils;
 
-public class MovieDetailsActivity extends AppCompatActivity implements AsyncTaskDelegate,
-        OnFragmentInteractionListener {
+public class MovieDetailsActivity extends AppCompatActivity implements OnFragmentInteractionListener {
 
     private static final String LOG_TAG = MovieDetailsActivity.class.getSimpleName();
+    private static final String KEY_VIDEOS_FRAGMENT = "videos_fragment_key";
+    private static final String KEY_REVIEWS_FRAGMENT = "reviews_fragment_key";
+    private static final String KEY_MOVIE = "movie_object_key";
+    public static final String ARG_MOVIEID = "arg_movieid";
+
     private CollapsingToolbarLayout mCollapsingToolbar;
     private ImageView mMovieCover;
     private Bitmap mBitmap;
-    private RecyclerView mVideosRecyclerView, mReviewsRecyclerView;
+
     private Movie mMovie;
     private Toolbar mToolbar;
     private boolean mIsFavorite;
+    private VideosFragment mVideosFragment;
+    private ReviewsFragment mReviewsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,81 +57,109 @@ public class MovieDetailsActivity extends AppCompatActivity implements AsyncTask
         mToolbar = (Toolbar) findViewById(R.id.movie_details_toolbar);
         setSupportActionBar(mToolbar);
 
-        mVideosRecyclerView = (RecyclerView) findViewById(R.id.videos_recyclerview);
-        mVideosRecyclerView.setHasFixedSize(true);
-        mVideosRecyclerView.setLayoutManager(
-                new LinearLayoutManager(MovieDetailsActivity.this,
-                        LinearLayoutManager.HORIZONTAL, false)
-        );
+        if (savedInstanceState != null) {
+            mMovie = savedInstanceState.getParcelable(KEY_MOVIE);
 
-        mReviewsRecyclerView = (RecyclerView) findViewById(R.id.reviews_recyclerview);
-        mReviewsRecyclerView.setHasFixedSize(true);
-        mReviewsRecyclerView.setLayoutManager(
-                new LinearLayoutManager(MovieDetailsActivity.this,
-                        LinearLayoutManager.VERTICAL, false)
-        );
+            mVideosFragment = (VideosFragment) getSupportFragmentManager()
+                    .getFragment(savedInstanceState, KEY_VIDEOS_FRAGMENT);
 
-        Intent intent = getIntent();
-        if (intent.hasExtra(Movie.EXTRA_MOVIE)) {
+            mReviewsFragment = (ReviewsFragment) getSupportFragmentManager()
+                    .getFragment(savedInstanceState, KEY_REVIEWS_FRAGMENT);
+        } else {
+            mMovie = getIntent().getParcelableExtra(Movie.EXTRA_MOVIE);
 
-            mMovie = intent.getParcelableExtra(Movie.EXTRA_MOVIE);
-            mIsFavorite = isFavorite(mMovie);
+            Bundle arguments = new Bundle();
+            arguments.putLong(ARG_MOVIEID, mMovie.getId());
 
-            Log.d(LOG_TAG, "Movie: " + mMovie.toString());
+            mVideosFragment = new VideosFragment();
+            mVideosFragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.videos_fragment, mVideosFragment)
+                    .commit();
 
-            Target target = new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    mBitmap = bitmap;
-                    mMovieCover.setImageBitmap(bitmap);
-                    setToolbarColor(mBitmap);
-                }
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-                    Log.d(LOG_TAG, "Load Failed: " + errorDrawable);
-                }
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    Log.d(LOG_TAG, "Prepare Load: " + placeHolderDrawable);
-                }
-            };
+            mReviewsFragment = new ReviewsFragment();
+            mReviewsFragment.setArguments(arguments);
 
-            mMovieCover = (ImageView) findViewById(R.id.movie_cover_imageview);
-            mMovieCover.setTag(target);
-            Picasso.with(MovieDetailsActivity.this).load(mMovie.getBackdropImage()).into(target);
-
-            TextView voteAverageTextView = (TextView) findViewById(R.id.movie_vote_average);
-            String voteAverage = getString(R.string.average_placeholder, String.valueOf(mMovie.getVoteAverage()));
-            voteAverageTextView.setText(voteAverage);
-
-            TextView releaseDateTextView = (TextView) findViewById(R.id.movie_release_date);
-            releaseDateTextView.setText(getDisplayDate(mMovie.getReleaseDate()));
-
-            TextView movieOverviewTextView = (TextView) findViewById(R.id.movie_overview);
-            movieOverviewTextView.setText(mMovie.getOverview());
-
-            mCollapsingToolbar.setTitle(mMovie.getTitle());
-
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_as_favorite);
-            toggleFabIcon(fab);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (mIsFavorite) {
-                        removeFromFavorites(mMovie);
-                    } else {
-                        addToFavorites(mMovie);
-                    }
-                    mIsFavorite = !mIsFavorite;
-                    toggleFabIcon((FloatingActionButton) view);
-                }
-            });
-
-            new VideoTask(MovieDetailsActivity.this).execute(String.valueOf(mMovie.getId()));
-            new ReviewTask(MovieDetailsActivity.this).execute(String.valueOf(mMovie.getId()));
-
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.revies_fragment, mReviewsFragment)
+                    .commit();
         }
 
+        mIsFavorite = isFavorite(mMovie);
+
+        Target target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                mMovieCover.setImageBitmap(bitmap);
+                setToolbarColor(bitmap);
+            }
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+                Log.d(LOG_TAG, "Load Failed: " + errorDrawable);
+            }
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                mMovieCover.setImageDrawable(placeHolderDrawable);
+                Log.d(LOG_TAG, "Prepare Load: " + placeHolderDrawable);
+            }
+        };
+
+        mMovieCover = (ImageView) findViewById(R.id.movie_cover_imageview);
+        mMovieCover.setTag(target);
+        Picasso.with(MovieDetailsActivity.this)
+                .load(mMovie.getBackdropImage())
+                .placeholder(R.drawable.placeholder_image)
+                .into(target);
+
+        TextView voteAverageTextView = (TextView) findViewById(R.id.movie_vote_average);
+        String voteAverage = getString(R.string.average_placeholder, String.valueOf(mMovie.getVoteAverage()));
+        voteAverageTextView.setText(voteAverage);
+
+        TextView releaseDateTextView = (TextView) findViewById(R.id.movie_release_date);
+        releaseDateTextView.setText(DateUtils.getDisplayDate(mMovie.getReleaseDate()));
+
+        TextView movieOverviewTextView = (TextView) findViewById(R.id.movie_overview);
+        movieOverviewTextView.setText(mMovie.getOverview());
+
+        mCollapsingToolbar.setTitle(mMovie.getTitle());
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_as_favorite);
+        toggleFabIcon(fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mIsFavorite) {
+                    removeFromFavorites(mMovie);
+                } else {
+                    addToFavorites(mMovie);
+                }
+                mIsFavorite = !mIsFavorite;
+                toggleFabIcon((FloatingActionButton) view);
+            }
+        });
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mVideosFragment != null) {
+            getSupportFragmentManager().putFragment(outState, KEY_VIDEOS_FRAGMENT, mVideosFragment);
+        }
+        if (mReviewsFragment != null) {
+            getSupportFragmentManager().putFragment(outState, KEY_REVIEWS_FRAGMENT, mReviewsFragment);
+        }
+
+        outState.putParcelable(KEY_MOVIE, mMovie);
+        Log.d(LOG_TAG, "Save Instance " + outState);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        mMovie = savedInstanceState.getParcelable(KEY_MOVIE);
+        Log.d(LOG_TAG, "Restore Instance " + savedInstanceState);
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     private void toggleFabIcon(FloatingActionButton fab) {
@@ -191,7 +211,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements AsyncTask
             cv.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
             cv.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
             cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
-                    DateUtils.dateInMillis(movie.getReleaseDate()));
+                    DateUtils.dateInMillis(movie.getReleaseDate())
+            );
 
             getContentResolver().insert(
                     MovieContract.MovieEntry.getMovieUri(),
@@ -202,10 +223,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements AsyncTask
 
             return true;
 
-        } catch (IllegalArgumentException illegalException) {
-            Log.d(LOG_TAG, illegalException.getMessage());
-        } catch (android.database.SQLException sqlException) {
-            Log.d(LOG_TAG, sqlException.getMessage());
+        } catch (IllegalArgumentException|android.database.SQLException ex) {
+            Log.d(LOG_TAG, ex.getMessage());
         }
 
         return false;
@@ -264,32 +283,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements AsyncTask
 
         Palette.from(bitmap).generate(paletteAsyncListener);
 
-    }
-
-    private String getDisplayDate(String date) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date d = sdf.parse(date);
-            DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
-            return df.format(d);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-
-    @Override
-    public void onProcessFinish(Object output, String taskType) {
-        switch (taskType) {
-            case MoviesApi.VIDEOS_PATH:
-                List<Video> videos = (List<Video>) output;
-                mVideosRecyclerView.setAdapter(new VideosAdapter(MovieDetailsActivity.this, videos));
-                break;
-            case MoviesApi.REVIEWS_PATH:
-                List<Review> reviews = (List<Review>) output;
-                mReviewsRecyclerView.setAdapter(new ReviewsAdapter(MovieDetailsActivity.this, reviews));
-                break;
-        }
     }
 
     @Override

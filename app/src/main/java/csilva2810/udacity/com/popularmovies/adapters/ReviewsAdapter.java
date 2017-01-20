@@ -60,7 +60,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
 
         return new ViewHolder(
                 LayoutInflater.from(mContext)
-                .inflate(R.layout.reviews_list_item, parent, false)
+                .inflate(R.layout.item_reviews_list, parent, false)
         );
 
     }
