@@ -19,12 +19,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/video_thumb_height"
                 android:scaleType="centerCrop"
-                android:src="@drawable/moviecover" />
+                android:src="@drawable/test_image" />
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/image_overlay" />
+                android:src="@drawable/layout_image_overlay" />
 
             <ImageView
                 android:layout_width="wrap_content"
