@@ -32,5 +32,6 @@
     <dimen name="video_item_width">300dp</dimen>
     <dimen name="video_thumb_height">125dp</dimen>
     <dimen name="collapsing_toolbar_margin">48dp</dimen>
+    <dimen name="collapsing_toolbar_imageview_height">256dp</dimen>
 
 </resources>

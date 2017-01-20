@@ -1,5 +1,6 @@
 package csilva2810.udacity.com.popularmovies.fragments;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,7 +28,6 @@ import csilva2810.udacity.com.popularmovies.utils.ConversionUtils;
 public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
 
     private static final String LOG_TAG = MoviesGridFragment.class.getSimpleName();
-    private static final String FRAGMENT_STATE = "fragment_state";
 
     private RecyclerView mRecyclerView;
     private GridLayoutManager mGridLayoutManager;
@@ -38,7 +38,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         int gridColumns = 2;
-        View view = inflater.inflate(R.layout.movies_grid_fragment, container, false);
+        View view = inflater.inflate(R.layout.fragment_movies_grid, container, false);
 
         mSpinnerProgress = (ProgressBar) view.findViewById(R.id.spinner_progress);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.movies_grid_recyclerview);
@@ -68,16 +68,20 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
 
     public void requestMovies() {
 
-        if (!App.isOnline(getActivity())) {
-            ((MainActivity) getActivity()).addFragment(MainActivity.NO_INTERNET_FRAGMENT_KEY);
-            return;
-        }
+        Context context = getActivity();
 
-        SharedPreferences sp = App.getSharedPreferences(getActivity());
+        SharedPreferences sp = App.getSharedPreferences(context);
         String movieFilter = sp.getString(App.SHARED_KEY_MOVIE_FILTER, MoviesApi.MOVIE_POPULAR);
 
+        if (!App.isOnline(context)) {
+            if (!movieFilter.equals(MainActivity.MOVIE_FAVORITES)) {
+                ((MainActivity) context).showNoInternet();
+                return;
+            }
+        }
+
         showSpinner();
-        new RequestMoviesTask(getActivity(), MoviesGridFragment.this).execute(movieFilter);
+        new RequestMoviesTask(context, MoviesGridFragment.this).execute(movieFilter);
 
     }
 
@@ -94,6 +98,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
         if (output != null) {
             List<Movie> movies = (List<Movie>) output;
             bindMoviesToView(movies);
+            ((MainActivity) getActivity()).showMoviesGrid();
         } else {
             App.networkErrorMessage(getActivity());
         }

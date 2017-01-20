@@ -75,7 +75,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
 
     public VideosAdapter.VideosViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view =
-                LayoutInflater.from(mContext).inflate(R.layout.videos_list_item, parent, false);
+                LayoutInflater.from(mContext).inflate(R.layout.item_videos_list, parent, false);
         return new VideosAdapter.VideosViewHolder(view);
 
     }
@@ -94,9 +94,11 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
             holder.videoKey = video.getKey();
 
             // possible sizes (default, hqdefault, mqdefault, sddefault, maxresdefault)
-
             String thumbUrl = "https://img.youtube.com/vi/" + holder.videoKey + "/sddefault.jpg";
-            Picasso.with(mContext).load(thumbUrl).into(holder.videoThumbnail);
+            Picasso.with(mContext)
+                    .load(thumbUrl)
+                    .placeholder(R.drawable.placeholder_video)
+                    .into(holder.videoThumbnail);
 
             Log.d(LOG_TAG, thumbUrl);
         }

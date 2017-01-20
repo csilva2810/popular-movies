@@ -1,38 +1,40 @@
 package csilva2810.udacity.com.popularmovies;
 
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import csilva2810.udacity.com.popularmovies.constants.App;
 import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
 import csilva2810.udacity.com.popularmovies.fragments.MoviesGridFragment;
 import csilva2810.udacity.com.popularmovies.fragments.NoInternetFragment;
+import csilva2810.udacity.com.popularmovies.listeners.OnFragmentInteractionListener;
 
 public class MainActivity extends AppCompatActivity implements
-    NoInternetFragment.OnTryAgainClickListener {
+        OnFragmentInteractionListener {
 
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    public static final String MOVIE_FRAGMENT_KEY = "movie_fragment";
-    public static final String NO_INTERNET_FRAGMENT_KEY = "no_internet_fragment";
-    public static final String ACTIVE_FRAGMENT_KEY = "active_fragment";
     public static final String MOVIE_FAVORITES = "favorites";
+    public static final String MOVIE_FRAGMENT_KEY = "movie_fragment";
 
     private MoviesGridFragment mMoviesGridFragment;
-    private NoInternetFragment mNoInternetFragment;
-    private String mActiveFragment;
     private Toolbar mToolbar;
-
-    private NoInternetFragment.OnTryAgainClickListener mListener;
+    private LinearLayout mNoInternetLayout;
+    private LinearLayout mMoviesGridLayout;
+    private FragmentManager mFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,53 +44,46 @@ public class MainActivity extends AppCompatActivity implements
 
         App.PACKAGE_NAME = getApplicationContext().getPackageName();
 
+        mFragmentManager = getSupportFragmentManager();
+        mMoviesGridFragment = new MoviesGridFragment();
+
         mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
         setSupportActionBar(mToolbar);
 
+        mMoviesGridLayout = (LinearLayout) findViewById(R.id.main_fragment_container);
+        mNoInternetLayout = (LinearLayout) findViewById(R.id.no_internet_fragment);
+
+
         if (!App.isOnline(MainActivity.this)) {
-            addFragment(NO_INTERNET_FRAGMENT_KEY);
-            return;
+            showNoInternet();
+        } else {
+            showMoviesGrid();
         }
 
         if (savedInstanceState != null) {
-            mActiveFragment = savedInstanceState.getString(ACTIVE_FRAGMENT_KEY);
-            switch (mActiveFragment) {
-                case MOVIE_FRAGMENT_KEY:
-                    mMoviesGridFragment = (MoviesGridFragment)
-                            getSupportFragmentManager()
-                                    .getFragment(savedInstanceState, MOVIE_FRAGMENT_KEY);
-                    break;
-                case NO_INTERNET_FRAGMENT_KEY:
-                    mNoInternetFragment = (NoInternetFragment)
-                            getSupportFragmentManager()
-                            .getFragment(savedInstanceState, NO_INTERNET_FRAGMENT_KEY);
-                    break;
-            }
+            mMoviesGridFragment =
+                    (MoviesGridFragment) mFragmentManager
+                            .getFragment(savedInstanceState, MOVIE_FRAGMENT_KEY);
+
             return;
         }
 
-        addFragment(MOVIE_FRAGMENT_KEY);
+        mFragmentManager
+                .beginTransaction()
+                .add(R.id.main_fragment_container, mMoviesGridFragment)
+                .commit();
 
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        switch (mActiveFragment) {
-            case MOVIE_FRAGMENT_KEY:
-                if (mMoviesGridFragment != null) {
-                    getSupportFragmentManager()
-                            .putFragment(outState, MOVIE_FRAGMENT_KEY, mMoviesGridFragment);
-                }
-                break;
-            case NO_INTERNET_FRAGMENT_KEY:
-                if (mNoInternetFragment != null) {
-                    getSupportFragmentManager()
-                            .putFragment(outState, NO_INTERNET_FRAGMENT_KEY, mNoInternetFragment);
-                }
-                break;
+
+        if (mMoviesGridFragment != null) {
+            mFragmentManager.putFragment(outState, MOVIE_FRAGMENT_KEY, mMoviesGridFragment);
         }
-        outState.putString(ACTIVE_FRAGMENT_KEY, mActiveFragment);
+
         super.onSaveInstanceState(outState);
+
     }
 
     @Override
@@ -129,52 +124,18 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    @Nullable
-    private Fragment getFragmentByKey(String fragmentKey) {
-        switch (fragmentKey) {
-            case MOVIE_FRAGMENT_KEY:
-                if (mMoviesGridFragment == null) {
-                    mMoviesGridFragment = new MoviesGridFragment();
-                }
-                return mMoviesGridFragment;
-            case NO_INTERNET_FRAGMENT_KEY:
-                if (mNoInternetFragment == null) {
-                    mNoInternetFragment = new NoInternetFragment();
-                }
-                return mNoInternetFragment;
-        }
-        return null;
+    public void showMoviesGrid() {
+        mMoviesGridLayout.setVisibility(View.VISIBLE);
+        mNoInternetLayout.setVisibility(View.GONE);
     }
 
-    public void addFragment(String fragmentKey) {
-
-        mActiveFragment = fragmentKey;
-        Fragment fragment = getFragmentByKey(fragmentKey);
-
-        if (getSupportFragmentManager().findFragmentById(R.id.main_fragment_container) != null) {
-            replaceFragment(fragment);
-            return;
-        }
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.main_fragment_container, fragment)
-                .commit();
-
-    }
-
-    private void replaceFragment(Fragment f) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_fragment_container, f)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
+    public void showNoInternet() {
+        mMoviesGridLayout.setVisibility(View.GONE);
+        mNoInternetLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onTryAgainClickListener() {
-        if (!App.isOnline(MainActivity.this)) {
-            return;
-        }
-        addFragment(MOVIE_FRAGMENT_KEY);
+    public void onFragmentInteraction(Uri uri) {
+        mMoviesGridFragment.requestMovies();
     }
 }

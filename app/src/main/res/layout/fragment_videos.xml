@@ -10,6 +10,10 @@
         android:text="@string/videos_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
+    <include
+        android:id="@+id/spinner_progress"
+        layout="@layout/spinner_progress" />
+
     <HorizontalScrollView
         android:id="@+id/video_scrollbar"
         android:layout_width="match_parent"

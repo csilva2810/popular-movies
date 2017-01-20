@@ -12,13 +12,14 @@ import android.widget.Button;
 
 import csilva2810.udacity.com.popularmovies.MainActivity;
 import csilva2810.udacity.com.popularmovies.R;
+import csilva2810.udacity.com.popularmovies.listeners.OnFragmentInteractionListener;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class NoInternetFragment extends Fragment {
 
-    private OnTryAgainClickListener mListener;
+    private OnFragmentInteractionListener mListener;
 
     public NoInternetFragment() {
         // Required empty public constructor
@@ -35,7 +36,7 @@ public class NoInternetFragment extends Fragment {
         btnTryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onTryAgainClickListener();
+                mListener.onFragmentInteraction(Uri.parse(""));
             }
         });
 
@@ -46,13 +47,10 @@ public class NoInternetFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mListener = (OnTryAgainClickListener) context;
+            mListener = (OnFragmentInteractionListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " Must Implement OnTryAgainClickListener");
+            throw new ClassCastException(context.toString() + " Must Implement OnFragmentInteractionListener");
         }
     }
 
-    public interface OnTryAgainClickListener {
-        public void onTryAgainClickListener();
-    }
 }

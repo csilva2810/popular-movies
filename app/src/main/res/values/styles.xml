@@ -24,7 +24,7 @@
         <item name="android:paddingRight">@dimen/cardview_tile_padding</item>
         <item name="android:textSize">@dimen/cardview_tile_textSize</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:background">@drawable/card_view_tile</item>
+        <item name="android:background">@drawable/layout_cardview_tile</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_gravity">bottom</item>
     </style>
@@ -32,7 +32,7 @@
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:src">@drawable/divider</item>
+        <item name="android:src">@drawable/layout_divider</item>
         <item name="android:layout_marginTop">@dimen/divider_margin</item>
         <item name="android:layout_marginBottom">@dimen/divider_margin</item>
     </style>

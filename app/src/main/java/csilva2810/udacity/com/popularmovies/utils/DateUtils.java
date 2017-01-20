@@ -1,6 +1,10 @@
 package csilva2810.udacity.com.popularmovies.utils;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by carlinhos on 1/17/17.
@@ -18,6 +22,18 @@ public class DateUtils {
         calendar.set(year, month, day);
 
         return calendar.getTimeInMillis();
+    }
+
+    public static String getDisplayDate(String date) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date d = sdf.parse(date);
+            DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
+            return df.format(d);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
 }

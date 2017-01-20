@@ -56,7 +56,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     @Override
     public MoviesAdapter.MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_thumbnail, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_movies_grid, parent, false);
         return new MovieViewHolder(view);
     }
 
@@ -69,6 +69,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
         Picasso.with(holder.itemView.getContext())
             .load(movie.getPosterImage())
+            .placeholder(R.drawable.placeholder_image)
             .into(holder.coverImageView);
 
     }

@@ -1,31 +1,35 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
-    android:gravity="center_vertical|center_horizontal"
-    android:padding="@dimen/no_internet_activity_padding"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
     tools:context=".fragments.NoInternetFragment">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_cloud_off_56dp" />
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:tint="@color/button_grey"
+        app:srcCompat="@drawable/ic_cloud_off_56dp" />
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/no_internet_textview"
+        style="@style/TextAppearance.AppCompat.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        style="@style/TextAppearance.AppCompat.Medium"
-        android:text="@string/no_internet" />
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:text="@string/no_internet"
+        android:textAlignment="center" />
 
     <Button
         android:id="@+id/button_try_again"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/try_again"
-        style="@style/Widget.AppCompat.Button.Colored" />
+        android:text="@string/try_again" />
 
 </LinearLayout>
