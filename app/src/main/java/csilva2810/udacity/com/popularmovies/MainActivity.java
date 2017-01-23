@@ -1,40 +1,29 @@
 package csilva2810.udacity.com.popularmovies;
 
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import csilva2810.udacity.com.popularmovies.constants.App;
-import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
 import csilva2810.udacity.com.popularmovies.fragments.MoviesGridFragment;
-import csilva2810.udacity.com.popularmovies.fragments.NoInternetFragment;
-import csilva2810.udacity.com.popularmovies.listeners.OnFragmentInteractionListener;
+import csilva2810.udacity.com.popularmovies.models.Movie;
 
-public class MainActivity extends AppCompatActivity implements
-        OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity {
 
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    public static final String MOVIE_FAVORITES = "favorites";
     public static final String MOVIE_FRAGMENT_KEY = "movie_fragment";
 
-    private MoviesGridFragment mMoviesGridFragment;
     private Toolbar mToolbar;
-    private LinearLayout mNoInternetLayout;
-    private LinearLayout mMoviesGridLayout;
-    private FragmentManager mFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,100 +31,75 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        App.PACKAGE_NAME = getApplicationContext().getPackageName();
-
-        mFragmentManager = getSupportFragmentManager();
-        mMoviesGridFragment = new MoviesGridFragment();
-
-        mToolbar = (Toolbar) findViewById(R.id.default_toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        mMoviesGridLayout = (LinearLayout) findViewById(R.id.main_fragment_container);
-        mNoInternetLayout = (LinearLayout) findViewById(R.id.no_internet_fragment);
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+
+        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
+        tabs.setupWithViewPager(viewPager);
 
 
-        if (!App.isOnline(MainActivity.this)) {
-            showNoInternet();
-        } else {
-            showMoviesGrid();
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        Adapter adapter = new Adapter(getSupportFragmentManager());
+
+        String[] fragmentTypes = new String[] {
+                Movie.MOVIE_POPULAR,
+                Movie.MOVIE_TOP_RATED,
+                Movie.MOVIE_FAVORITES
+        };
+        String[] fragmentTitles = new String[] {
+                getString(R.string.action_filter_popular),
+                getString(R.string.action_filter_top_rated),
+                getString(R.string.action_filter_favorites)
+        };
+
+        for (int i = 0; i < fragmentTypes.length; i++) {
+            Bundle bundle = new Bundle();
+            bundle.putString(App.SHARED_KEY_MOVIE_FILTER, fragmentTypes[i]);
+
+            MoviesGridFragment fragment = new MoviesGridFragment();
+            fragment.setArguments(bundle);
+
+            Log.d(LOG_TAG, "Fragment " + fragment);
+            Log.d(LOG_TAG, "Bundle " + bundle);
+            adapter.addFragment(fragment, fragmentTitles[i]);
         }
 
-        if (savedInstanceState != null) {
-            mMoviesGridFragment =
-                    (MoviesGridFragment) mFragmentManager
-                            .getFragment(savedInstanceState, MOVIE_FRAGMENT_KEY);
+        viewPager.setAdapter(adapter);
+    }
 
-            return;
+    static class Adapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public Adapter(FragmentManager manager) {
+            super(manager);
         }
 
-        mFragmentManager
-                .beginTransaction()
-                .add(R.id.main_fragment_container, mMoviesGridFragment)
-                .commit();
-
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-
-        if (mMoviesGridFragment != null) {
-            mFragmentManager.putFragment(outState, MOVIE_FRAGMENT_KEY, mMoviesGridFragment);
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
         }
 
-        super.onSaveInstanceState(outState);
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_activity_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.action_filter_popular:
-                setMovieFilter(MoviesApi.MOVIE_POPULAR);
-                break;
-            case R.id.action_filter_top_rated:
-                setMovieFilter(MoviesApi.MOVIE_TOP_RATED);
-                break;
-            case R.id.action_filter_favorites:
-                setMovieFilter(MOVIE_FAVORITES);
-                break;
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
         }
 
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void setMovieFilter(String movieFilter) {
-
-        SharedPreferences sp = App.getSharedPreferences(MainActivity.this);
-        SharedPreferences.Editor editor = sp.edit();
-
-        editor.putString(App.SHARED_KEY_MOVIE_FILTER, movieFilter);
-        editor.apply();
-
-        if (mMoviesGridFragment != null) {
-            mMoviesGridFragment.requestMovies();
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
         }
 
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 
-    public void showMoviesGrid() {
-        mMoviesGridLayout.setVisibility(View.VISIBLE);
-        mNoInternetLayout.setVisibility(View.GONE);
-    }
-
-    public void showNoInternet() {
-        mMoviesGridLayout.setVisibility(View.GONE);
-        mNoInternetLayout.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        mMoviesGridFragment.requestMovies();
-    }
 }

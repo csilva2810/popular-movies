@@ -2,6 +2,8 @@ package csilva2810.udacity.com.popularmovies.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.SQLException;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,8 +15,11 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import csilva2810.udacity.com.popularmovies.database.MovieContract;
 import csilva2810.udacity.com.popularmovies.models.Movie;
 import csilva2810.udacity.com.popularmovies.MovieDetailsActivity;
 import csilva2810.udacity.com.popularmovies.R;
@@ -22,24 +27,27 @@ import csilva2810.udacity.com.popularmovies.R;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
 
     private List<Movie> mMovies;
+    private Set<Long> mFavorites;
     private Context mContext;
     private static final String LOG_TAG = MoviesAdapter.class.getSimpleName();
 
     public MoviesAdapter(Context context, List<Movie> movies) {
         this.mContext = context;
         this.mMovies = movies;
+        this.mFavorites = Movie.getFavoriteIndexes(context);
     }
 
-    public class MovieViewHolder extends RecyclerView.ViewHolder {
+    class MovieViewHolder extends RecyclerView.ViewHolder {
 
         CardView cv;
-        ImageView coverImageView;
+        ImageView coverImageView, favoriteIcon;
         TextView titleTextView;
 
-        public MovieViewHolder(View itemView) {
+        MovieViewHolder(View itemView) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.movie_card_view);
             coverImageView = (ImageView) itemView.findViewById(R.id.movie_cover);
+            favoriteIcon = (ImageView) itemView.findViewById(R.id.favorite_icon);
             titleTextView = (TextView) itemView.findViewById(R.id.movie_title);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +73,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
         Movie movie = mMovies.get(position);
         holder.titleTextView.setText(movie.getTitle());
-        // "https://source.unsplash.com/category/nature/800x600"
+
+        if (mFavorites.contains(movie.getId())) {
+            // Show favorite icon
+            holder.favoriteIcon.setVisibility(View.VISIBLE);
+        }
 
         Picasso.with(holder.itemView.getContext())
             .load(movie.getPosterImage())

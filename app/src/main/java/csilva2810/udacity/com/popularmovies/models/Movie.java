@@ -2,8 +2,10 @@ package csilva2810.udacity.com.popularmovies.models;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -11,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import csilva2810.udacity.com.popularmovies.constants.App;
@@ -23,8 +26,13 @@ import csilva2810.udacity.com.popularmovies.database.MovieContract;
 
 public class Movie implements Parcelable {
 
-    public static final String EXTRA_MOVIE = App.PACKAGE_NAME + ".EXTRA_MOVIE";
     private static final String LOG_TAG = Movie.class.getSimpleName();
+
+    public static final String MOVIE_FAVORITES = "favorites";
+    public static final String MOVIE_POPULAR = "popular";
+    public static final String MOVIE_TOP_RATED = "top_rated";
+
+    public static final String EXTRA_MOVIE = "EXTRA_MOVIE";
 
     private long id;
     private String title;
@@ -192,6 +200,34 @@ public class Movie implements Parcelable {
         }
 
         return movies;
+    }
+
+    @Nullable
+    public static HashSet<Long> getFavoriteIndexes(Context context) {
+        HashSet<Long> favorites = new HashSet<>();
+        try {
+
+            int INDEX_APP_ID = 0;
+            Cursor c = context.getContentResolver().query(
+                    MovieContract.MovieEntry.getMovieUri(),
+                    new String[] {MovieContract.MovieEntry.COLUMN_API_ID},
+                    null, null, null
+            );
+
+            if (c != null) {
+                while (c.moveToNext()) {
+                    favorites.add(c.getLong(INDEX_APP_ID));
+                }
+            }
+
+            Log.d(LOG_TAG, "Favorites Movies: " + favorites);
+
+            return favorites;
+
+        } catch (IllegalArgumentException | SQLException e) {
+            Log.d(LOG_TAG, e.getMessage());
+        }
+        return null;
     }
 
     @Override

@@ -16,7 +16,6 @@ import java.util.List;
 import csilva2810.udacity.com.popularmovies.MovieDetailsActivity;
 import csilva2810.udacity.com.popularmovies.R;
 import csilva2810.udacity.com.popularmovies.adapters.ReviewsAdapter;
-import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
 import csilva2810.udacity.com.popularmovies.listeners.OnFragmentInteractionListener;
 import csilva2810.udacity.com.popularmovies.models.Review;
 import csilva2810.udacity.com.popularmovies.services.ReviewTask;
@@ -94,6 +93,11 @@ public class ReviewsFragment extends Fragment implements AsyncTaskDelegate {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onProcessPrepare() {
+
     }
 
     @Override
