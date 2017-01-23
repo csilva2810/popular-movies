@@ -35,6 +35,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         this.mContext = context;
         this.mMovies = movies;
         this.mFavorites = Movie.getFavoriteIndexes(context);
+        Log.d(LOG_TAG, "Favorites: " + this.mFavorites);
     }
 
     class MovieViewHolder extends RecyclerView.ViewHolder {
@@ -73,6 +74,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
         Movie movie = mMovies.get(position);
         holder.titleTextView.setText(movie.getTitle());
+
+        Log.d(LOG_TAG, "Position:" + position);
+        Log.d(LOG_TAG, "Movie: " + movie.getId() + " - " + movie.getTitle());
 
         if (mFavorites.contains(movie.getId())) {
             // Show favorite icon

@@ -38,10 +38,13 @@ public class RequestMoviesTask extends AsyncTask<String, Integer, List<Movie>> {
     @Override
     protected List<Movie> doInBackground(String... params) {
 
+        List<Movie> movies;
         String movieType = params[0];
 
         if (movieType.equals(Movie.MOVIE_FAVORITES)) {
-            return Movie.getFavorites(mContext);
+            movies = Movie.getFavorites(mContext);
+            Log.d(LOG_TAG, "Movies: " + movies);
+            return movies;
         }
 
         Uri.Builder uriBuilder = new Uri.Builder();
@@ -58,7 +61,9 @@ public class RequestMoviesTask extends AsyncTask<String, Integer, List<Movie>> {
             URL url = new URL(myUrl);
             String response = HttpRequest.getJson(url);
 
-            return Movie.parseJson(response);
+            movies = Movie.parseJson(response);
+            Log.d(LOG_TAG, "Movies: " + movies);
+            return movies;
 
         } catch (MalformedURLException e) {
             Log.e(LOG_TAG, e.getMessage());
