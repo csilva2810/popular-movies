@@ -11,9 +11,6 @@ public class MoviesApi {
         public static final String REVIEWS_PATH = "reviews";
         public static final String VIDEOS_PATH = "videos";
 
-        public static final String MOVIE_POPULAR = "popular";
-        public static final String MOVIE_TOP_RATED = "top_rated";
-
         public static final String IMAGE_POSTER_SMALL = "w185/";
         public static final String IMAGE_POSTER_MEDIUM = "w342/";
         public static final String IMAGE_POSTER_LARGE = "w500/";

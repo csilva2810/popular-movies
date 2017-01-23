@@ -12,7 +12,7 @@
 
     <include
         android:id="@+id/spinner_progress"
-        layout="@layout/spinner_progress" />
+        layout="@layout/layout_progress_spinner" />
 
     <HorizontalScrollView
         android:id="@+id/video_scrollbar"

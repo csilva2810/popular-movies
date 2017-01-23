@@ -5,5 +5,6 @@ package csilva2810.udacity.com.popularmovies.utils;
  */
 
 public interface AsyncTaskDelegate {
+    void onProcessPrepare();
     void onProcessFinish(Object output, String taskType);
 }

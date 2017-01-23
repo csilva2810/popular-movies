@@ -10,45 +10,59 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import java.util.List;
 
-import csilva2810.udacity.com.popularmovies.MainActivity;
+import csilva2810.udacity.com.popularmovies.R;
 import csilva2810.udacity.com.popularmovies.adapters.MoviesAdapter;
 import csilva2810.udacity.com.popularmovies.constants.App;
-import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
 import csilva2810.udacity.com.popularmovies.decorators.GridSpacingItemDecoration;
+import csilva2810.udacity.com.popularmovies.models.Movie;
 import csilva2810.udacity.com.popularmovies.services.RequestMoviesTask;
 import csilva2810.udacity.com.popularmovies.utils.AsyncTaskDelegate;
-import csilva2810.udacity.com.popularmovies.models.Movie;
-import csilva2810.udacity.com.popularmovies.R;
 import csilva2810.udacity.com.popularmovies.utils.ConversionUtils;
 
 public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
 
     private static final String LOG_TAG = MoviesGridFragment.class.getSimpleName();
 
+    private String mMoviesFilter;
     private RecyclerView mRecyclerView;
-    private GridLayoutManager mGridLayoutManager;
     private ProgressBar mSpinnerProgress;
-    private MoviesAdapter mMoviesAdapter;
+    private LinearLayout mNoInternetLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        Bundle args = getArguments();
+        mMoviesFilter = args.getString(App.SHARED_KEY_MOVIE_FILTER);
+
         int gridColumns = 2;
+        int gridSpacingSize = 5;
+
+        Log.d(LOG_TAG, "savedInstanceState: " + savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_movies_grid, container, false);
 
+        mNoInternetLayout = (LinearLayout) view.findViewById(R.id.no_internet_layout);
         mSpinnerProgress = (ProgressBar) view.findViewById(R.id.spinner_progress);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.movies_grid_recyclerview);
         mRecyclerView.setHasFixedSize(true);
 
-        mGridLayoutManager = new GridLayoutManager(getActivity(), gridColumns);
-        mRecyclerView.setLayoutManager(mGridLayoutManager);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), gridColumns));
         mRecyclerView.addItemDecoration(
-                new GridSpacingItemDecoration(2, ConversionUtils.dpToPx(getActivity(), 5), true)
+                new GridSpacingItemDecoration(gridColumns, ConversionUtils.dpToPx(getActivity(), gridSpacingSize), true)
         );
+
+        Button tryAgainButton = (Button) mNoInternetLayout.findViewById(R.id.button_try_again);
+        tryAgainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                requestMovies();
+            }
+        });
 
         requestMovies();
 
@@ -56,40 +70,49 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
 
     }
 
+    private void requestMovies() {
+
+        new RequestMoviesTask(getActivity(), MoviesGridFragment.this).execute(mMoviesFilter);
+
+    }
+
+    private void bindMoviesToView(List<Movie> movies) {
+        mRecyclerView.setAdapter(new MoviesAdapter(getActivity(), movies));
+    }
+
     private void showSpinner() {
         mRecyclerView.setVisibility(View.GONE);
+        mNoInternetLayout.setVisibility(View.GONE);
         mSpinnerProgress.setVisibility(View.VISIBLE);
     }
 
     private void hideSpinner() {
         mSpinnerProgress.setVisibility(View.GONE);
+        mNoInternetLayout.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
-    public void requestMovies() {
+    private void showMoviesGrid() {
+        mNoInternetLayout.setVisibility(View.GONE);
+        mSpinnerProgress.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
 
-        Context context = getActivity();
+    private void showNoInternet() {
+        mRecyclerView.setVisibility(View.GONE);
+        mSpinnerProgress.setVisibility(View.GONE);
+        mNoInternetLayout.setVisibility(View.VISIBLE);
+    }
 
-        SharedPreferences sp = App.getSharedPreferences(context);
-        String movieFilter = sp.getString(App.SHARED_KEY_MOVIE_FILTER, MoviesApi.MOVIE_POPULAR);
-
-        if (!App.isOnline(context)) {
-            if (!movieFilter.equals(MainActivity.MOVIE_FAVORITES)) {
-                ((MainActivity) context).showNoInternet();
+    @Override
+    public void onProcessPrepare() {
+        if (!mMoviesFilter.equals(Movie.MOVIE_FAVORITES)) {
+            if (!App.isOnline(getActivity())) {
+                showNoInternet();
                 return;
             }
         }
-
         showSpinner();
-        new RequestMoviesTask(context, MoviesGridFragment.this).execute(movieFilter);
-
-    }
-
-    public void bindMoviesToView(List<Movie> movies) {
-        Log.d(LOG_TAG, movies.toString());
-        mMoviesAdapter = new MoviesAdapter(getActivity(), movies);
-        mRecyclerView.setAdapter(mMoviesAdapter);
-        mMoviesAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -98,7 +121,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
         if (output != null) {
             List<Movie> movies = (List<Movie>) output;
             bindMoviesToView(movies);
-            ((MainActivity) getActivity()).showMoviesGrid();
+            showMoviesGrid();
         } else {
             App.networkErrorMessage(getActivity());
         }
