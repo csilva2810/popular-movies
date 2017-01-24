@@ -86,6 +86,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
                     .commit();
         }
 
+        Log.d(LOG_TAG, "Details: " + mMovie);
+
         mCollapsingToolbar.setTitle(mMovie.getTitle());
 
         Target target = new Target() {
@@ -117,7 +119,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
         voteAverageTextView.setText(voteAverage);
 
         TextView releaseDateTextView = (TextView) findViewById(R.id.movie_release_date);
-        releaseDateTextView.setText(DateUtils.getDisplayDate(mMovie.getReleaseDate()));
+        releaseDateTextView.setText(DateUtils.getDisplayDate(Long.valueOf(mMovie.getReleaseDate())));
 
         TextView movieOverviewTextView = (TextView) findViewById(R.id.movie_overview);
         movieOverviewTextView.setText(mMovie.getOverview());
@@ -210,9 +212,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
             cv.put(MovieContract.MovieEntry.COLUMN_BACKDROP, movie.getBackdropImage());
             cv.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
             cv.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
-            cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
-                    DateUtils.dateInMillis(movie.getReleaseDate())
-            );
+            cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
 
             getContentResolver().insert(
                     MovieContract.MovieEntry.getMovieUri(),

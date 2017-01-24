@@ -1,5 +1,7 @@
 package csilva2810.udacity.com.popularmovies.utils;
 
+import android.util.Log;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +14,10 @@ import java.util.Date;
 
 public class DateUtils {
 
+    private static final String LOG_TAG = DateUtils.class.getSimpleName();
+
+    public static final String API_DATE_FORMAT = "yyyy-MM-dd";
+
     public static long dateInMillis(String releaseDate) {
         String[] date = releaseDate.split("-");
         int year = Integer.parseInt(date[0]);
@@ -21,17 +27,20 @@ public class DateUtils {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);
 
+        Log.d(LOG_TAG, "DateInMillis: " + calendar.getTimeInMillis());
+
         return calendar.getTimeInMillis();
     }
 
-    public static String getDisplayDate(String date) {
+    public static String getDisplayDate(Long millis) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date d = sdf.parse(date);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(millis);
+            Date date = calendar.getTime();
             DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
-            return df.format(d);
-        } catch (ParseException e) {
-            e.printStackTrace();
+            return df.format(date);
+        } catch (Exception e) {
+            Log.d(LOG_TAG, e.getMessage());
             return "";
         }
     }
