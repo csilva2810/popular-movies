@@ -48,9 +48,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         if (favorites != null) {
             Log.d(LOG_TAG, "Favorites: " + favorites);
             for (Movie movie : mMovies) {
-                if (favorites.contains(movie.getId())) {
-                    movie.setFavorite(true);
-                }
+                movie.setFavorite(favorites.contains(movie.getId()));
             }
         }
     }
