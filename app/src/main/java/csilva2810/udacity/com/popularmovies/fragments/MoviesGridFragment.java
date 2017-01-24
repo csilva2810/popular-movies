@@ -1,7 +1,7 @@
 package csilva2810.udacity.com.popularmovies.fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 
 import java.util.List;
 
+import csilva2810.udacity.com.popularmovies.MovieDetailsActivity;
 import csilva2810.udacity.com.popularmovies.R;
 import csilva2810.udacity.com.popularmovies.adapters.MoviesAdapter;
 import csilva2810.udacity.com.popularmovies.constants.App;
@@ -25,14 +26,20 @@ import csilva2810.udacity.com.popularmovies.services.RequestMoviesTask;
 import csilva2810.udacity.com.popularmovies.utils.AsyncTaskDelegate;
 import csilva2810.udacity.com.popularmovies.utils.ConversionUtils;
 
-public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
+public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
+        MoviesAdapter.OnMovieClickListener {
 
     private static final String LOG_TAG = MoviesGridFragment.class.getSimpleName();
+
+    public static final int REQUEST_CODE_DETAILS = 1;
 
     private String mMoviesFilter;
     private RecyclerView mRecyclerView;
     private ProgressBar mSpinnerProgress;
     private LinearLayout mNoInternetLayout;
+    private MoviesAdapter mAdapter;
+    private int mMovieClickedPosition;
+    private List<Movie> mMovies;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +57,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
         mSpinnerProgress = (ProgressBar) view.findViewById(R.id.spinner_progress);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.movies_grid_recyclerview);
         mRecyclerView.setHasFixedSize(true);
+
 
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), gridColumns));
         mRecyclerView.addItemDecoration(
@@ -71,13 +79,20 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
     }
 
     private void requestMovies() {
-
+        if (!mMoviesFilter.equals(Movie.MOVIE_FAVORITES)) {
+            if (!App.isOnline(getActivity())) {
+                showNoInternet();
+                return;
+            }
+        }
+        showSpinner();
         new RequestMoviesTask(getActivity(), MoviesGridFragment.this).execute(mMoviesFilter);
-
     }
 
     private void bindMoviesToView(List<Movie> movies) {
-        mRecyclerView.setAdapter(new MoviesAdapter(getActivity(), movies));
+        mMovies = movies;
+        mAdapter = new MoviesAdapter(getContext(), mMovies, this);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void showSpinner() {
@@ -105,17 +120,6 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
     }
 
     @Override
-    public void onProcessPrepare() {
-        if (!mMoviesFilter.equals(Movie.MOVIE_FAVORITES)) {
-            if (!App.isOnline(getActivity())) {
-                showNoInternet();
-                return;
-            }
-        }
-        showSpinner();
-    }
-
-    @Override
     public void onProcessFinish(Object output, String taskType) {
         hideSpinner();
         if (output != null) {
@@ -127,4 +131,33 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate {
         }
     }
 
+    @Override
+    public void onMovieClick(Object object, int position) {
+        Movie movie = (Movie) object;
+        mMovieClickedPosition = position;
+
+        Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
+        intent.putExtra(Movie.EXTRA_MOVIE, movie);
+        startActivityForResult(intent, REQUEST_CODE_DETAILS);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_DETAILS) {
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+
+                    int operation = data.getIntExtra(Movie.EXTRA_MOVIE_OPERATION, 0);
+                    if (operation == Movie.FLAG_ADDED) {
+                        Movie movie = data.getParcelableExtra(Movie.EXTRA_MOVIE);
+                        mMovies.add(mMovieClickedPosition, movie);
+                    } else {
+                        mMovies.remove(mMovieClickedPosition);
+                    }
+                    mAdapter.notifyItemChanged(mMovieClickedPosition);
+
+                    break;
+            }
+        }
+    }
 }

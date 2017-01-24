@@ -32,4 +32,8 @@
 
     <string name="no_reviews_message">No Reviews Found!</string>
 
+    <string name="message_add_favorite_success">Added to Favorites</string>
+    <string name="message_remove_favorite_success">Removed From Favorites</string>
+    <string name="message_favorite_error">Error! Try Again.</string>
+
 </resources>

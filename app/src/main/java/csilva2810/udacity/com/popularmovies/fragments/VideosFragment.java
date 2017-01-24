@@ -92,11 +92,6 @@ public class VideosFragment extends Fragment implements AsyncTaskDelegate {
     }
 
     @Override
-    public void onProcessPrepare() {
-
-    }
-
-    @Override
     public void onProcessFinish(Object output, String taskType) {
         if (output != null) {
             List<Video> videos = (List<Video>) output;

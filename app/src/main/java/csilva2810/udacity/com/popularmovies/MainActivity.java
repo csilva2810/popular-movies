@@ -1,5 +1,7 @@
 package csilva2810.udacity.com.popularmovies;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import csilva2810.udacity.com.popularmovies.constants.App;
@@ -34,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
@@ -47,27 +49,25 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
 
-        String[] fragmentTypes = new String[] {
+        List<String> fragmentTypes = Arrays.asList(
                 Movie.MOVIE_POPULAR,
                 Movie.MOVIE_TOP_RATED,
                 Movie.MOVIE_FAVORITES
-        };
-        String[] fragmentTitles = new String[] {
+        );
+        List<String> fragmentTitles = Arrays.asList(
                 getString(R.string.action_filter_popular),
                 getString(R.string.action_filter_top_rated),
                 getString(R.string.action_filter_favorites)
-        };
+        );
 
-        for (int i = 0; i < fragmentTypes.length; i++) {
+        for (int i = 0; i < fragmentTypes.size(); i++) {
             Bundle bundle = new Bundle();
-            bundle.putString(App.SHARED_KEY_MOVIE_FILTER, fragmentTypes[i]);
+            bundle.putString(App.SHARED_KEY_MOVIE_FILTER, fragmentTypes.get(i));
 
             MoviesGridFragment fragment = new MoviesGridFragment();
             fragment.setArguments(bundle);
 
-            Log.d(LOG_TAG, "Fragment " + fragment);
-            Log.d(LOG_TAG, "Bundle " + bundle);
-            adapter.addFragment(fragment, fragmentTitles[i]);
+            adapter.addFragment(fragment, fragmentTitles.get(i));
         }
 
         viewPager.setAdapter(adapter);
