@@ -15,8 +15,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import csilva2810.udacity.com.popularmovies.constants.App;
 import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
 import csilva2810.udacity.com.popularmovies.database.MovieContract;
 
@@ -27,12 +27,16 @@ import csilva2810.udacity.com.popularmovies.database.MovieContract;
 public class Movie implements Parcelable {
 
     private static final String LOG_TAG = Movie.class.getSimpleName();
-
     public static final String MOVIE_FAVORITES = "favorites";
+
     public static final String MOVIE_POPULAR = "popular";
     public static final String MOVIE_TOP_RATED = "top_rated";
 
     public static final String EXTRA_MOVIE = "EXTRA_MOVIE";
+    public static final String EXTRA_MOVIE_OPERATION = "EXTRA_OPERATION";
+
+    public static final int FLAG_REMOVED = 1;
+    public static final int FLAG_ADDED = 2;
 
     private long id;
     private String title;
@@ -41,6 +45,15 @@ public class Movie implements Parcelable {
     private String overview;
     private double voteAverage;
     private String releaseDate;
+    private boolean isFavorite;
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
 
     public Movie(long id, String title, String posterImage, String backdropImage, String overview, double voteAverage, String releaseDate) {
         this.id = id;
@@ -60,6 +73,7 @@ public class Movie implements Parcelable {
         this.overview = movie.readString();
         this.voteAverage = movie.readDouble();
         this.releaseDate = movie.readString();
+        this.isFavorite = movie.readByte() != 0;
     }
 
     public String getBackdropImage() {
@@ -199,12 +213,13 @@ public class Movie implements Parcelable {
             movies.add(movie);
         }
 
+        c.close();
         return movies;
     }
 
     @Nullable
-    public static HashSet<Long> getFavoriteIndexes(Context context) {
-        HashSet<Long> favorites = new HashSet<>();
+    public static Set<Long> getFavoritesId(Context context) {
+        Set<Long> favorites = new HashSet<>();
         try {
 
             int INDEX_APP_ID = 0;
@@ -218,6 +233,7 @@ public class Movie implements Parcelable {
                 while (c.moveToNext()) {
                     favorites.add(c.getLong(INDEX_APP_ID));
                 }
+                c.close();
             }
 
             Log.d(LOG_TAG, "Favorites Movies: " + favorites);
@@ -244,6 +260,7 @@ public class Movie implements Parcelable {
         dest.writeString(overview);
         dest.writeDouble(voteAverage);
         dest.writeString(releaseDate);
+        dest.writeByte((byte) (isFavorite ? 1 : 0));
     }
 
     static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {

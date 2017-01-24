@@ -1,8 +1,9 @@
 package csilva2810.udacity.com.popularmovies;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
+import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
@@ -40,11 +42,9 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
 
     private CollapsingToolbarLayout mCollapsingToolbar;
     private ImageView mMovieCover;
-    private Bitmap mBitmap;
 
     private Movie mMovie;
     private Toolbar mToolbar;
-    private boolean mIsFavorite;
     private VideosFragment mVideosFragment;
     private ReviewsFragment mReviewsFragment;
 
@@ -73,19 +73,20 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
 
             mVideosFragment = new VideosFragment();
             mVideosFragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
+            getSupportFragmentManager()
+                    .beginTransaction()
                     .add(R.id.videos_fragment, mVideosFragment)
                     .commit();
 
             mReviewsFragment = new ReviewsFragment();
             mReviewsFragment.setArguments(arguments);
-
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.revies_fragment, mReviewsFragment)
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.reviews_fragment, mReviewsFragment)
                     .commit();
         }
 
-        mIsFavorite = isFavorite(mMovie);
+        mCollapsingToolbar.setTitle(mMovie.getTitle());
 
         Target target = new Target() {
             @Override
@@ -108,7 +109,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
         mMovieCover.setTag(target);
         Picasso.with(MovieDetailsActivity.this)
                 .load(mMovie.getBackdropImage())
-                .placeholder(R.drawable.placeholder_image)
+                .placeholder(R.drawable.placeholder_video)
                 .into(target);
 
         TextView voteAverageTextView = (TextView) findViewById(R.id.movie_vote_average);
@@ -121,23 +122,46 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
         TextView movieOverviewTextView = (TextView) findViewById(R.id.movie_overview);
         movieOverviewTextView.setText(mMovie.getOverview());
 
-        mCollapsingToolbar.setTitle(mMovie.getTitle());
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_as_favorite);
         toggleFabIcon(fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mIsFavorite) {
-                    removeFromFavorites(mMovie);
+
+                if (mMovie.isFavorite()) {
+                    if (!removeFromFavorites(mMovie)) {
+                        snackMessage(view, getString(R.string.message_favorite_error));
+                        return;
+                    }
+                    snackMessage(view, getString(R.string.message_remove_favorite_success));
                 } else {
-                    addToFavorites(mMovie);
+                    if (!addToFavorites(mMovie)) {
+                        snackMessage(view, getString(R.string.message_favorite_error));
+                        return;
+                    }
+                    snackMessage(view, getString(R.string.message_add_favorite_success));
                 }
-                mIsFavorite = !mIsFavorite;
+                mMovie.setFavorite(!mMovie.isFavorite());
                 toggleFabIcon((FloatingActionButton) view);
+                setResult();
             }
         });
 
+    }
+
+    private void setResult() {
+        Intent result = new Intent();
+        if (mMovie.isFavorite()) {
+            result.putExtra(Movie.EXTRA_MOVIE_OPERATION, Movie.FLAG_ADDED);
+            result.putExtra(Movie.EXTRA_MOVIE, mMovie);
+        } else {
+            result.putExtra(Movie.EXTRA_MOVIE_OPERATION, Movie.FLAG_REMOVED);
+        }
+        setResult(Activity.RESULT_OK, result);
+    }
+
+    private void snackMessage(View view, String message) {
+        Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -163,7 +187,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
     }
 
     private void toggleFabIcon(FloatingActionButton fab) {
-        if (mIsFavorite) {
+        if (mMovie.isFavorite()) {
             fab.setImageDrawable(
                     ContextCompat.getDrawable(fab.getContext(), R.drawable.ic_star_24dp)
             );
@@ -172,31 +196,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
                     ContextCompat.getDrawable(fab.getContext(), R.drawable.ic_star_border_24dp)
             );
         }
-    }
-
-    private boolean isFavorite(Movie movie) {
-
-        try {
-
-            Cursor cursor = getContentResolver().query(
-                    MovieContract.MovieEntry.getMovieWithIdUri(movie.getId()),
-                    new String[] {MovieContract.MovieEntry._ID},
-                    null,
-                    null,
-                    null
-            );
-
-            if (cursor == null) {
-                return false;
-            }
-
-            return cursor.getCount() > 0;
-
-        } catch (IllegalArgumentException e) {
-            Log.e(LOG_TAG, e.getMessage());
-            return false;
-        }
-
     }
 
     private boolean addToFavorites(final Movie movie) {
@@ -223,7 +222,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
 
             return true;
 
-        } catch (IllegalArgumentException|android.database.SQLException ex) {
+        } catch (IllegalArgumentException | SQLException ex) {
             Log.d(LOG_TAG, ex.getMessage());
         }
 
@@ -239,9 +238,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
                     MovieContract.MovieEntry.COLUMN_API_ID + " = ? ",
                     new String[] { String.valueOf(movie.getId()) }
             );
-            if (deletedRows > -1) {
-                return true;
-            }
+            return (deletedRows > -1);
         } catch (IllegalArgumentException e) {
             Log.d(LOG_TAG, e.getMessage());
         }

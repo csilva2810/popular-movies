@@ -96,11 +96,6 @@ public class ReviewsFragment extends Fragment implements AsyncTaskDelegate {
     }
 
     @Override
-    public void onProcessPrepare() {
-
-    }
-
-    @Override
     public void onProcessFinish(Object output, String taskType) {
         List<Review> reviews = (List<Review>) output;
         mReviewsRecyclerView.setAdapter(new ReviewsAdapter(getActivity(), reviews));
