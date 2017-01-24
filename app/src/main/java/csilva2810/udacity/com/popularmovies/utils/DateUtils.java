@@ -25,7 +25,7 @@ public class DateUtils {
         int day = Integer.parseInt(date[2]);
 
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day);
+        calendar.set(year, month - 1, day);
 
         Log.d(LOG_TAG, "DateInMillis: " + calendar.getTimeInMillis());
 
