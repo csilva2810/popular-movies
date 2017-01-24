@@ -19,6 +19,7 @@ import java.util.Set;
 
 import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
 import csilva2810.udacity.com.popularmovies.database.MovieContract;
+import csilva2810.udacity.com.popularmovies.utils.DateUtils;
 
 /**
  * Created by carlinhos on 12/8/16.
@@ -44,7 +45,7 @@ public class Movie implements Parcelable {
     private String backdropImage;
     private String overview;
     private double voteAverage;
-    private String releaseDate;
+    private long releaseDate;
     private boolean isFavorite;
 
     public boolean isFavorite() {
@@ -55,7 +56,7 @@ public class Movie implements Parcelable {
         isFavorite = favorite;
     }
 
-    public Movie(long id, String title, String posterImage, String backdropImage, String overview, double voteAverage, String releaseDate) {
+    public Movie(long id, String title, String posterImage, String backdropImage, String overview, double voteAverage, long releaseDate) {
         this.id = id;
         this.title = title;
         this.posterImage = posterImage;
@@ -72,7 +73,7 @@ public class Movie implements Parcelable {
         this.backdropImage = movie.readString();
         this.overview = movie.readString();
         this.voteAverage = movie.readDouble();
-        this.releaseDate = movie.readString();
+        this.releaseDate = movie.readLong();
         this.isFavorite = movie.readByte() != 0;
     }
 
@@ -124,11 +125,11 @@ public class Movie implements Parcelable {
         this.voteAverage = voteAverage;
     }
 
-    public String getReleaseDate() {
+    public long getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
+    public void setReleaseDate(long releaseDate) {
         this.releaseDate = releaseDate;
     }
 
@@ -136,6 +137,7 @@ public class Movie implements Parcelable {
     public String toString() {
         return  this.getId() + " - " +
                 this.getTitle() + " - " +
+                this.getReleaseDate() + " - " +
                 this.getBackdropImage() + " - " +
                 this.getPosterImage();
     }
@@ -158,7 +160,7 @@ public class Movie implements Parcelable {
                         MoviesApi.IMAGES_URL + MoviesApi.IMAGE_BACKDROP_MEDIUM + movieJson.getString("backdrop_path");
                 String overview = movieJson.getString("overview");
                 Double voteAverage = movieJson.getDouble("vote_average");
-                String releaseDate = movieJson.getString("release_date");
+                long releaseDate = DateUtils.dateInMillis(movieJson.getString("release_date"));
 
                 Movie m = new Movie(id, title, posterImage, backdropImage, overview, voteAverage, releaseDate);
                 movies.add(m);
@@ -207,9 +209,9 @@ public class Movie implements Parcelable {
                     c.getString(INDEX_BACKDROP),
                     c.getString(INDEX_OVERVIEW),
                     c.getDouble(INDEX_VOTE_AVERAGE),
-                    c.getString(INDEX_RELEASE_DATE)
+                    c.getLong(INDEX_RELEASE_DATE)
             );
-            Log.d(LOG_TAG, "Movie: " + movie.toString());
+            Log.d(LOG_TAG, "Favorite Movies: " + movie.toString());
             movies.add(movie);
         }
 
@@ -259,7 +261,7 @@ public class Movie implements Parcelable {
         dest.writeString(backdropImage);
         dest.writeString(overview);
         dest.writeDouble(voteAverage);
-        dest.writeString(releaseDate);
+        dest.writeLong(releaseDate);
         dest.writeByte((byte) (isFavorite ? 1 : 0));
     }
 

@@ -43,7 +43,6 @@ public class RequestMoviesTask extends AsyncTask<String, Integer, List<Movie>> {
 
         if (movieType.equals(Movie.MOVIE_FAVORITES)) {
             movies = Movie.getFavorites(mContext);
-            Log.d(LOG_TAG, "Movies: " + movies);
             return movies;
         }
 
