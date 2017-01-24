@@ -143,19 +143,20 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
                 }
                 mMovie.setFavorite(!mMovie.isFavorite());
                 toggleFabIcon((FloatingActionButton) view);
-                setResult();
+                setActivityResult();
             }
         });
 
     }
 
-    private void setResult() {
+    private void setActivityResult() {
         Intent result = new Intent();
         if (mMovie.isFavorite()) {
             result.putExtra(Movie.EXTRA_MOVIE_OPERATION, Movie.FLAG_ADDED);
             result.putExtra(Movie.EXTRA_MOVIE, mMovie);
         } else {
             result.putExtra(Movie.EXTRA_MOVIE_OPERATION, Movie.FLAG_REMOVED);
+            result.putExtra(Movie.EXTRA_MOVIE, mMovie);
         }
         setResult(Activity.RESULT_OK, result);
     }
