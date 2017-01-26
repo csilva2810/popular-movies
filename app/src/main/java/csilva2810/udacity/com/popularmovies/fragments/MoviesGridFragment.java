@@ -34,8 +34,6 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
     private static final String LOG_TAG = MoviesGridFragment.class.getSimpleName();
 
     public static final int REQUEST_CODE_DETAILS = 1;
-    public static final String MOVIES_LIST_KEY = "MOVIES_LIST_KEY";
-    public static final String MOVIES_FILTER_KEY = "MOVIES_FILTER_KEY";
 
     private String mMoviesFilter;
     private RecyclerView mRecyclerView;
@@ -51,8 +49,8 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
         Bundle args = getArguments();
         mMoviesFilter = args.getString(App.SHARED_KEY_MOVIE_FILTER);
 
-        int gridColumns = 2;
-        int gridSpacingSize = 5;
+        int gridColumns = getActivity().getResources().getInteger(R.integer.movies_grid_columns);
+        int gridGutter = getActivity().getResources().getInteger(R.integer.movies_grid_gutter);
 
         Log.d(LOG_TAG, "savedInstanceState: " + savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_movies_grid, container, false);
@@ -64,7 +62,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
 
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), gridColumns));
         mRecyclerView.addItemDecoration(
-                new GridSpacingItemDecoration(gridColumns, ConversionUtils.dpToPx(getActivity(), gridSpacingSize), true)
+                new GridSpacingItemDecoration(gridColumns, ConversionUtils.dpToPx(getActivity(), gridGutter), true)
         );
 
         Button tryAgainButton = (Button) mNoInternetLayout.findViewById(R.id.button_try_again);

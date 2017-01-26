@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -75,14 +74,14 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
             mVideosFragment.setArguments(arguments);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.videos_fragment, mVideosFragment)
+                    .add(R.id.videos_container, mVideosFragment)
                     .commit();
 
             mReviewsFragment = new ReviewsFragment();
             mReviewsFragment.setArguments(arguments);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.reviews_fragment, mReviewsFragment)
+                    .add(R.id.reviews_container, mReviewsFragment)
                     .commit();
         }
 
@@ -152,14 +151,11 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
     }
 
     private void setActivityResult() {
+        int operation = mMovie.isFavorite() ? Movie.FLAG_ADDED : Movie.FLAG_REMOVED;
         Intent result = new Intent();
-        if (mMovie.isFavorite()) {
-            result.putExtra(Movie.EXTRA_MOVIE_OPERATION, Movie.FLAG_ADDED);
-            result.putExtra(Movie.EXTRA_MOVIE, mMovie);
-        } else {
-            result.putExtra(Movie.EXTRA_MOVIE_OPERATION, Movie.FLAG_REMOVED);
-            result.putExtra(Movie.EXTRA_MOVIE, mMovie);
-        }
+
+        result.putExtra(Movie.EXTRA_MOVIE_OPERATION, operation);
+        result.putExtra(Movie.EXTRA_MOVIE, mMovie);
         setResult(Activity.RESULT_OK, result);
     }
 
@@ -177,7 +173,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
         }
 
         outState.putParcelable(KEY_MOVIE, mMovie);
-        Log.d(LOG_TAG, "Save Instance " + outState);
 
         super.onSaveInstanceState(outState);
     }
@@ -185,20 +180,18 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         mMovie = savedInstanceState.getParcelable(KEY_MOVIE);
-        Log.d(LOG_TAG, "Restore Instance " + savedInstanceState);
         super.onRestoreInstanceState(savedInstanceState);
     }
 
     private void toggleFabIcon(FloatingActionButton fab) {
-        if (mMovie.isFavorite()) {
-            fab.setImageDrawable(
-                    ContextCompat.getDrawable(fab.getContext(), R.drawable.ic_star_24dp)
-            );
-        } else {
-            fab.setImageDrawable(
-                    ContextCompat.getDrawable(fab.getContext(), R.drawable.ic_star_border_24dp)
-            );
-        }
+        int icon = mMovie.isFavorite() ?
+                R.drawable.ic_star_24dp :
+                R.drawable.ic_star_border_24dp;
+
+        fab.setImageResource(icon);
+//        fab.setImageDrawable(
+//                ContextCompat.getDrawable(fab.getContext(), icon)
+//        );
     }
 
     private boolean addToFavorites(final Movie movie) {

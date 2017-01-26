@@ -57,94 +57,104 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginTop="-16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <android.support.v7.widget.CardView
+            style="@style/MyCardView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:weightSum="1">
+            android:layout_height="match_parent"
+            android:clickable="false"
+            android:layout_marginLeft="100dp"
+            android:layout_marginRight="100dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/cardview_padding"
-                android:paddingTop="@dimen/activity_vertical_margin">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <ImageView
-                    style="@style/AutoWidth"
-                    android:layout_height="wrap_content"
-                    android:tint="@color/button_grey"
-                    app:srcCompat="@drawable/ic_grade_black_24dp" />
-
-                <ImageView
-                    style="@style/AutoWidth"
-                    android:layout_height="wrap_content"
-                    android:tint="@color/button_grey"
-                    app:srcCompat="@drawable/ic_event_24dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/cardview_padding">
-
-                <TextView
-                    android:id="@+id/movie_vote_average"
-                    style="@style/AutoWidth"
-                    android:layout_height="wrap_content"
-                    android:text="@string/movie_vote_average"
-                    android:textAlignment="center" />
-
-                <TextView
-                    android:id="@+id/movie_release_date"
-                    style="@style/AutoWidth"
-                    android:layout_height="wrap_content"
-                    android:text="@string/movie_release_date"
-                    android:textAlignment="center" />
-
-            </LinearLayout>
-
-            <ImageView style="@style/Divider" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="@dimen/activity_horizontal_padding"
-                android:paddingRight="@dimen/activity_horizontal_padding">
-
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="@string/movie_synopsis"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+                    android:orientation="horizontal"
+                    android:paddingBottom="@dimen/cardview_padding"
+                    android:paddingTop="@dimen/activity_vertical_margin">
 
-                <TextView
-                    android:id="@+id/movie_overview"
+                    <ImageView
+                        style="@style/AutoWidth"
+                        android:layout_height="wrap_content"
+                        android:tint="@color/button_grey"
+                        app:srcCompat="@drawable/ic_grade_black_24dp" />
+
+                    <ImageView
+                        style="@style/AutoWidth"
+                        android:layout_height="wrap_content"
+                        android:tint="@color/button_grey"
+                        app:srcCompat="@drawable/ic_event_24dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    tools:text="@string/movie_overview" />
+                    android:orientation="horizontal"
+                    android:paddingBottom="@dimen/cardview_padding">
+
+                    <TextView
+                        android:id="@+id/movie_vote_average"
+                        style="@style/AutoWidth"
+                        android:layout_height="wrap_content"
+                        android:text="@string/movie_vote_average"
+                        android:textAlignment="center" />
+
+                    <TextView
+                        android:id="@+id/movie_release_date"
+                        style="@style/AutoWidth"
+                        android:layout_height="wrap_content"
+                        android:text="@string/movie_release_date"
+                        android:textAlignment="center" />
+
+                </LinearLayout>
+
+                <ImageView style="@style/Divider" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/activity_horizontal_padding"
+                    android:paddingRight="@dimen/activity_horizontal_padding">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/activity_vertical_margin"
+                        android:text="@string/movie_synopsis"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
+                    <TextView
+                        android:id="@+id/movie_overview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/activity_vertical_margin"
+                        tools:text="@string/movie_overview" />
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/videos_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <FrameLayout
+                    android:id="@+id/reviews_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
             </LinearLayout>
 
-            <FrameLayout
-                android:id="@+id/videos_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <FrameLayout
-                android:id="@+id/reviews_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </LinearLayout>
+        </android.support.v7.widget.CardView>
 
     </android.support.v4.widget.NestedScrollView>
 
