@@ -89,7 +89,6 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
 
         showSpinner();
         new RequestMoviesTask(getActivity(), MoviesGridFragment.this).execute(mMoviesFilter);
-
     }
 
     private void bindMoviesToView(List<Movie> movies) {
@@ -129,8 +128,6 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
             List<Movie> movies = (List<Movie>) output;
             bindMoviesToView(movies);
             showMoviesGrid();
-        } else {
-            App.networkErrorMessage(getActivity());
         }
     }
 
