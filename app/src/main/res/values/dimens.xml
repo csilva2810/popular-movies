@@ -40,7 +40,7 @@
     <dimen name="details_cover_width">100dp</dimen>
     <dimen name="details_cover_height">130dp</dimen>
     <dimen name="headline_margin">16dp</dimen>
-    <dimen name="movie_details_margin">0dp</dimen>
+    <dimen name="details_margin">0dp</dimen>
     <dimen name="details_overlapTop">0dp</dimen>
     <dimen name="details_elevation">0dp</dimen>
 

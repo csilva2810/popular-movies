@@ -1,7 +1,5 @@
 package csilva2810.udacity.com.popularmovies;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -10,7 +8,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,8 +20,6 @@ import csilva2810.udacity.com.popularmovies.models.Movie;
 public class MainActivity extends AppCompatActivity {
 
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
-
-    public static final String MOVIE_FRAGMENT_KEY = "movie_fragment";
 
     private Toolbar mToolbar;
 
