@@ -62,6 +62,7 @@ public class ReviewsFragment extends Fragment implements AsyncTaskDelegate {
                     new LinearLayoutManager(getActivity(),
                             LinearLayoutManager.VERTICAL, false)
             );
+            mReviewsRecyclerView.setNestedScrollingEnabled(false);
 
             mProgressBar = (ProgressBar) view.findViewById(R.id.spinner_progress);
 

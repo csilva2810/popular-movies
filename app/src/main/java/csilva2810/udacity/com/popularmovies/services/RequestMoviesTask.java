@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import csilva2810.udacity.com.popularmovies.BuildConfig;
@@ -19,7 +20,7 @@ import csilva2810.udacity.com.popularmovies.utils.HttpRequest;
 /**
  * Created by carlinhos on 1/12/17.
  */
-public class RequestMoviesTask extends AsyncTask<String, Integer, List<Movie>> {
+public class RequestMoviesTask extends AsyncTask<String, Integer, ArrayList<Movie>> {
 
     public static final String LOG_TAG = MoviesGridFragment.class.getSimpleName();
     private AsyncTaskDelegate mDelegate;
@@ -36,9 +37,9 @@ public class RequestMoviesTask extends AsyncTask<String, Integer, List<Movie>> {
     }
 
     @Override
-    protected List<Movie> doInBackground(String... params) {
+    protected ArrayList<Movie> doInBackground(String... params) {
 
-        List<Movie> movies;
+        ArrayList<Movie> movies;
         String movieType = params[0];
 
         if (movieType.equals(Movie.MOVIE_FAVORITES)) {
@@ -60,7 +61,7 @@ public class RequestMoviesTask extends AsyncTask<String, Integer, List<Movie>> {
             URL url = new URL(myUrl);
             String response = HttpRequest.getJson(url);
 
-            movies = Movie.parseJson(response);
+            movies = Movie.parseJson(mContext, response);
             Log.d(LOG_TAG, "Movies: " + movies);
             return movies;
 
@@ -73,7 +74,7 @@ public class RequestMoviesTask extends AsyncTask<String, Integer, List<Movie>> {
     }
 
     @Override
-    protected void onPostExecute(List<Movie> movies) {
+    protected void onPostExecute(ArrayList<Movie> movies) {
         super.onPostExecute(movies);
         if (movies != null) {
             mDelegate.onProcessFinish(movies, null);

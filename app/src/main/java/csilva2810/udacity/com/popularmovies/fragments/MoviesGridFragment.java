@@ -2,12 +2,13 @@ package csilva2810.udacity.com.popularmovies.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import csilva2810.udacity.com.popularmovies.MovieDetailsActivity;
 import csilva2810.udacity.com.popularmovies.R;
@@ -33,26 +33,48 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
 
     private static final String LOG_TAG = MoviesGridFragment.class.getSimpleName();
 
+    private static final String KEY_CLICKED_POSITION = "KEY_CLICKED_POSITION";
+    private static final String KEY_MOVIES = "KEY_MOVIES";
+    private static final String KEY_MOVIES_FILTER = "KEY_MOVIES_FILTER";
+
     public static final int REQUEST_CODE_DETAILS = 1;
 
-    private String mMoviesFilter;
     private RecyclerView mRecyclerView;
     private ProgressBar mSpinnerProgress;
     private LinearLayout mNoInternetLayout;
     private MoviesAdapter mAdapter;
+    private RequestMoviesTask mTask;
+
+    private String mMoviesFilter;
     private int mMovieClickedPosition;
-    private List<Movie> mMovies;
+    private ArrayList<Movie> mMovies;
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(KEY_CLICKED_POSITION, mMovieClickedPosition);
+        outState.putString(KEY_MOVIES_FILTER, mMoviesFilter);
+        outState.putParcelableArrayList(KEY_MOVIES, mMovies);
+        if (mTask != null) {
+            mTask.cancel(true);
+        }
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        Bundle args = getArguments();
-        mMoviesFilter = args.getString(App.SHARED_KEY_MOVIE_FILTER);
+        if (savedInstanceState == null) {
+            Bundle args = getArguments();
+            mMoviesFilter = args.getString(App.SHARED_KEY_MOVIE_FILTER);
+        } else {
+            mMovieClickedPosition = savedInstanceState.getInt(KEY_CLICKED_POSITION);
+            mMoviesFilter = savedInstanceState.getString(KEY_MOVIES_FILTER);
+            mMovies = savedInstanceState.getParcelableArrayList(KEY_MOVIES);
+        }
 
         int gridColumns = getActivity().getResources().getInteger(R.integer.movies_grid_columns);
         int gridGutter = getActivity().getResources().getInteger(R.integer.movies_grid_gutter);
 
-        Log.d(LOG_TAG, "savedInstanceState: " + savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_movies_grid, container, false);
 
         mNoInternetLayout = (LinearLayout) view.findViewById(R.id.no_internet_layout);
@@ -73,7 +95,11 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
             }
         });
 
-        requestMovies();
+        if (mMovies == null) {
+            requestMovies();
+        } else {
+            bindMoviesToView(mMovies);
+        }
 
         return view;
 
@@ -88,13 +114,15 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
         }
 
         showSpinner();
-        new RequestMoviesTask(getActivity(), MoviesGridFragment.this).execute(mMoviesFilter);
+        mTask = new RequestMoviesTask(getActivity(), MoviesGridFragment.this);
+        mTask.execute(mMoviesFilter);
     }
 
-    private void bindMoviesToView(List<Movie> movies) {
+    private void bindMoviesToView(ArrayList<Movie> movies) {
         mMovies = movies;
         mAdapter = new MoviesAdapter(getContext(), mMovies, this);
         mRecyclerView.setAdapter(mAdapter);
+        showMoviesGrid();
     }
 
     private void showSpinner() {
@@ -125,22 +153,27 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
     public void onProcessFinish(Object output, String taskType) {
         hideSpinner();
         if (output != null) {
-            List<Movie> movies = (List<Movie>) output;
-            bindMoviesToView(movies);
-            showMoviesGrid();
+            bindMoviesToView((ArrayList<Movie>) output);
         }
     }
 
     @Override
-    public void onMovieClick(Object object, int position) {
+    public void onMovieClick(Object object, int position, View coverImageView) {
         Movie movie = (Movie) object;
         mMovieClickedPosition = position;
 
-        Log.d(LOG_TAG, "Movie Clicked: " + position + " " + movie);
-
         Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
         intent.putExtra(Movie.EXTRA_MOVIE, movie);
-        startActivityForResult(intent, REQUEST_CODE_DETAILS);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            String transition = getActivity().getString(R.string.transition_movie_cover);
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(getActivity(), coverImageView, transition);
+
+            startActivityForResult(intent, REQUEST_CODE_DETAILS, options.toBundle());
+        } else {
+            startActivityForResult(intent, REQUEST_CODE_DETAILS);
+        }
     }
 
     @Override

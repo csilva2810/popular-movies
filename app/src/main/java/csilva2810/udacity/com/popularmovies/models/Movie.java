@@ -14,9 +14,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import csilva2810.udacity.com.popularmovies.R;
 import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
 import csilva2810.udacity.com.popularmovies.database.MovieContract;
 import csilva2810.udacity.com.popularmovies.utils.DateUtils;
@@ -142,8 +142,8 @@ public class Movie implements Parcelable {
                 this.getPosterImage();
     }
 
-    public static List<Movie> parseJson(String json) {
-        List<Movie> movies = new ArrayList<>();
+    public static ArrayList<Movie> parseJson(Context context, String json) {
+        ArrayList<Movie> movies = new ArrayList<>();
 
         try {
             JSONObject jsonObject = new JSONObject(json);
@@ -156,8 +156,9 @@ public class Movie implements Parcelable {
                 String title = movieJson.getString("title");
                 String posterImage =
                         MoviesApi.IMAGES_URL + MoviesApi.IMAGE_POSTER_MEDIUM + movieJson.getString("poster_path");
+                String backdropSize = context.getResources().getString(R.string.api_backdrop_size);
                 String backdropImage =
-                        MoviesApi.IMAGES_URL + MoviesApi.IMAGE_BACKDROP_MEDIUM + movieJson.getString("backdrop_path");
+                        MoviesApi.IMAGES_URL + backdropSize + movieJson.getString("backdrop_path");
                 String overview = movieJson.getString("overview");
                 Double voteAverage = movieJson.getDouble("vote_average");
                 long releaseDate = DateUtils.dateInMillis(movieJson.getString("release_date"));
@@ -173,7 +174,7 @@ public class Movie implements Parcelable {
         return movies;
     }
 
-    public static List<Movie> getFavorites(Context context) {
+    public static ArrayList<Movie> getFavorites(Context context) {
         String columns[] = new String[] {
                 MovieContract.MovieEntry.COLUMN_API_ID,
                 MovieContract.MovieEntry.COLUMN_TITLE,
@@ -191,7 +192,7 @@ public class Movie implements Parcelable {
         final int INDEX_VOTE_AVERAGE = 5;
         final int INDEX_RELEASE_DATE = 6;
 
-        List<Movie> movies = new ArrayList<>();
+        ArrayList<Movie> movies = new ArrayList<>();
         Cursor c = context.getContentResolver().query(
                 MovieContract.MovieEntry.getMovieUri(),
                 columns, null, null, null

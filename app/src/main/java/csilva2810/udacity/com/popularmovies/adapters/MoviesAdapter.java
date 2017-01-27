@@ -28,7 +28,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private static final String LOG_TAG = MoviesAdapter.class.getSimpleName();
 
     public interface OnMovieClickListener {
-        void onMovieClick(Object object, int position);
+        void onMovieClick(Object object, int position, View itemView);
     }
 
     public MoviesAdapter(Context context, List<Movie> movies, OnMovieClickListener listener) {
@@ -81,7 +81,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onMovieClick(movie, position);
+                    onMovieClick(movie, position, coverImageView);
                 }
             });
 
@@ -93,8 +93,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         }
 
         @Override
-        public void onMovieClick(Object object, int position) {
-            mListener.onMovieClick(object, position);
+        public void onMovieClick(Object object, int position, View view) {
+            mListener.onMovieClick(object, position, view);
         }
     }
 

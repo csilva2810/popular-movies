@@ -37,6 +37,9 @@
     <string name="message_favorite_error">Error! Try Again.</string>
     <string name="rating_label">Rating</string>
     <string name="release_date_label">Release Date</string>
-    <string name="empty_text"></string>
+
+    <string name="api_poster_size">w342/</string>
+    <string name="api_backdrop_size">w780/</string>
+    <string name="transition_movie_cover">MovieCover</string>
 
 </resources>
