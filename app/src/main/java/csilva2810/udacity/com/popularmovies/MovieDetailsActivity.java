@@ -41,6 +41,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
 
     private CollapsingToolbarLayout mCollapsingToolbar;
     private ImageView mMovieBackdrop;
+    private FloatingActionButton mFab;
 
     private Movie mMovie;
     private Toolbar mToolbar;
@@ -52,10 +53,10 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
 
-        mCollapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        if (savedInstanceState != null) {
+        if (savedInstanceState == null) {
+            mMovie = getIntent().getParcelableExtra(Movie.EXTRA_MOVIE);
+            setupVideoAndReviewsFragments();
+        } else {
             mMovie = savedInstanceState.getParcelable(KEY_MOVIE);
 
             mVideosFragment = (VideosFragment) getSupportFragmentManager()
@@ -63,32 +64,23 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
 
             mReviewsFragment = (ReviewsFragment) getSupportFragmentManager()
                     .getFragment(savedInstanceState, KEY_REVIEWS_FRAGMENT);
-        } else {
-            mMovie = getIntent().getParcelableExtra(Movie.EXTRA_MOVIE);
-
-            Bundle arguments = new Bundle();
-            arguments.putLong(ARG_MOVIEID, mMovie.getId());
-
-            mVideosFragment = new VideosFragment();
-            mVideosFragment.setArguments(arguments);
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.videos_container, mVideosFragment)
-                    .commit();
-
-            mReviewsFragment = new ReviewsFragment();
-            mReviewsFragment.setArguments(arguments);
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.reviews_container, mReviewsFragment)
-                    .commit();
         }
 
-        Log.d(LOG_TAG, "Details: " + mMovie);
+        mCollapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         mCollapsingToolbar.setTitle(mMovie.getTitle());
         mToolbar.setTitle(mMovie.getTitle());
         setSupportActionBar(mToolbar);
+
+        TextView movieTitle = (TextView) findViewById(R.id.movie_title_textview);
+        movieTitle.setText(mMovie.getTitle());
+
+        ImageView movieCover = (ImageView) findViewById(R.id.movie_cover_imageview);
+        Picasso.with(MovieDetailsActivity.this)
+                .load(mMovie.getPosterImage())
+                .placeholder(R.drawable.placeholder_video)
+                .into(movieCover);
 
         Target target = new Target() {
             @Override
@@ -107,15 +99,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
             }
         };
 
-        TextView movieTitle = (TextView) findViewById(R.id.movie_title_textview);
-        movieTitle.setText(mMovie.getTitle());
-
-        ImageView movieCover = (ImageView) findViewById(R.id.movie_cover_imageview);
-        Picasso.with(MovieDetailsActivity.this)
-                .load(mMovie.getPosterImage())
-                .placeholder(R.drawable.placeholder_video)
-                .into(movieCover);
-
         mMovieBackdrop = (ImageView) findViewById(R.id.movie_backdrop_imageview);
         mMovieBackdrop.setTag(target);
         Picasso.with(MovieDetailsActivity.this)
@@ -133,9 +116,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
         TextView movieOverviewTextView = (TextView) findViewById(R.id.movie_overview);
         movieOverviewTextView.setText(mMovie.getOverview());
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_as_favorite);
-        toggleFabIcon(fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab = (FloatingActionButton) findViewById(R.id.fab_add_as_favorite);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -153,11 +135,32 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
                     snackMessage(view, getString(R.string.message_add_favorite_success));
                 }
                 mMovie.setFavorite(!mMovie.isFavorite());
-                toggleFabIcon((FloatingActionButton) view);
+                toggleFabIcon();
                 setActivityResult();
             }
         });
+        toggleFabIcon();
 
+    }
+
+    private void setupVideoAndReviewsFragments() {
+        Bundle arguments = new Bundle();
+        arguments.putLong(ARG_MOVIEID, mMovie.getId());
+
+        mVideosFragment = new VideosFragment();
+        mReviewsFragment = new ReviewsFragment();
+
+        mVideosFragment.setArguments(arguments);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.videos_container, mVideosFragment)
+                .commit();
+
+        mReviewsFragment.setArguments(arguments);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.reviews_container, mReviewsFragment)
+                .commit();
     }
 
     private void setActivityResult() {
@@ -187,18 +190,12 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        mMovie = savedInstanceState.getParcelable(KEY_MOVIE);
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    private void toggleFabIcon(FloatingActionButton fab) {
+    private void toggleFabIcon() {
         int icon = mMovie.isFavorite() ?
                 R.drawable.ic_star_24dp :
                 R.drawable.ic_star_border_24dp;
 
-        fab.setImageResource(icon);
+        mFab.setImageResource(icon);
     }
 
     private boolean addToFavorites(final Movie movie) {
