@@ -40,7 +40,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
     public static final String ARG_MOVIEID = "arg_movieid";
 
     private CollapsingToolbarLayout mCollapsingToolbar;
-    private ImageView mMovieCover;
+    private ImageView mMovieBackdrop;
 
     private Movie mMovie;
     private Toolbar mToolbar;
@@ -53,8 +53,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
         setContentView(R.layout.activity_movie_details);
 
         mCollapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        mToolbar = (Toolbar) findViewById(R.id.movie_details_toolbar);
-        setSupportActionBar(mToolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         if (savedInstanceState != null) {
             mMovie = savedInstanceState.getParcelable(KEY_MOVIE);
@@ -88,11 +87,13 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
         Log.d(LOG_TAG, "Details: " + mMovie);
 
         mCollapsingToolbar.setTitle(mMovie.getTitle());
+        mToolbar.setTitle(mMovie.getTitle());
+        setSupportActionBar(mToolbar);
 
         Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                mMovieCover.setImageBitmap(bitmap);
+                mMovieBackdrop.setImageBitmap(bitmap);
                 setToolbarColor(bitmap);
             }
             @Override
@@ -101,13 +102,22 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
             }
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable) {
-                mMovieCover.setImageDrawable(placeHolderDrawable);
+                mMovieBackdrop.setImageDrawable(placeHolderDrawable);
                 Log.d(LOG_TAG, "Prepare Load: " + placeHolderDrawable);
             }
         };
 
-        mMovieCover = (ImageView) findViewById(R.id.movie_cover_imageview);
-        mMovieCover.setTag(target);
+        TextView movieTitle = (TextView) findViewById(R.id.movie_title_textview);
+        movieTitle.setText(mMovie.getTitle());
+
+        ImageView movieCover = (ImageView) findViewById(R.id.movie_cover_imageview);
+        Picasso.with(MovieDetailsActivity.this)
+                .load(mMovie.getPosterImage())
+                .placeholder(R.drawable.placeholder_video)
+                .into(movieCover);
+
+        mMovieBackdrop = (ImageView) findViewById(R.id.movie_backdrop_imageview);
+        mMovieBackdrop.setTag(target);
         Picasso.with(MovieDetailsActivity.this)
                 .load(mMovie.getBackdropImage())
                 .placeholder(R.drawable.placeholder_video)
@@ -189,9 +199,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
                 R.drawable.ic_star_border_24dp;
 
         fab.setImageResource(icon);
-//        fab.setImageDrawable(
-//                ContextCompat.getDrawable(fab.getContext(), icon)
-//        );
     }
 
     private boolean addToFavorites(final Movie movie) {

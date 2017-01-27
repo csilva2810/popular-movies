@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator_layout"
@@ -18,16 +17,17 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="false"
+            android:fitsSystemWindows="true"
             app:collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleMarginEnd="@dimen/collapsing_toolbar_margin"
             app:expandedTitleMarginStart="@dimen/collapsing_toolbar_margin"
             app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Large"
+            app:titleEnabled="false"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
-                android:id="@+id/movie_cover_imageview"
+                android:id="@+id/movie_backdrop_imageview"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/collapsing_toolbar_imageview_height"
                 android:contentDescription="@string/movie_backdrop"
@@ -42,7 +42,7 @@
                 android:src="@drawable/layout_image_scrim" />
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/movie_details_toolbar"
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:minHeight="?attr/actionBarSize"
@@ -58,6 +58,11 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        app:behavior_overlapTop="0dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -69,67 +74,74 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/cardview_padding"
-                android:paddingTop="@dimen/activity_vertical_margin">
+                android:orientation="horizontal">
 
                 <ImageView
-                    style="@style/AutoWidth"
-                    android:layout_height="wrap_content"
-                    android:tint="@color/button_grey"
-                    app:srcCompat="@drawable/ic_grade_black_24dp" />
+                    android:id="@+id/movie_cover_imageview"
+                    android:layout_width="@dimen/details_cover_width"
+                    android:layout_height="@dimen/details_cover_height"
+                    android:layout_marginEnd="@dimen/cover_margin"
+                    android:layout_marginRight="@dimen/cover_margin"
+                    android:scaleType="centerCrop" />
 
-                <ImageView
-                    style="@style/AutoWidth"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:tint="@color/button_grey"
-                    app:srcCompat="@drawable/ic_event_24dp" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/movie_title_textview"
+                        style="@style/TextAppearance.AppCompat.Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/text_margin"
+                        tools:text="Nome Filme" />
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/rating_label" />
+
+                    <TextView
+                        android:id="@+id/movie_vote_average"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/text_margin"
+                        tools:text="@string/movie_vote_average" />
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/release_date_label" />
+
+                    <TextView
+                        android:id="@+id/movie_release_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="@string/movie_release_date" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/cardview_padding">
-
-                <TextView
-                    android:id="@+id/movie_vote_average"
-                    style="@style/AutoWidth"
-                    android:layout_height="wrap_content"
-                    android:text="@string/movie_vote_average"
-                    android:textAlignment="center" />
-
-                <TextView
-                    android:id="@+id/movie_release_date"
-                    style="@style/AutoWidth"
-                    android:layout_height="wrap_content"
-                    android:text="@string/movie_release_date"
-                    android:textAlignment="center" />
-
-            </LinearLayout>
-
-            <ImageView style="@style/Divider" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="@dimen/activity_horizontal_padding"
-                android:paddingRight="@dimen/activity_horizontal_padding">
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="@string/movie_synopsis"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+                    android:layout_marginBottom="@dimen/headline_margin"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                    android:text="@string/movie_synopsis" />
 
                 <TextView
                     android:id="@+id/movie_overview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     tools:text="@string/movie_overview" />
 
             </LinearLayout>
@@ -152,9 +164,12 @@
         android:id="@+id/fab_add_as_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        style="@style/FabGrey"
         app:fabSize="normal"
+        app:layout_anchor="@id/appbar_layout"
+        app:layout_anchorGravity="bottom|end|right"
         app:srcCompat="@drawable/ic_star_border_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>
