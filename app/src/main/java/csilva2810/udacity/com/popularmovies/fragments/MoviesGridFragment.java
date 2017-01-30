@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
 
     private RecyclerView mRecyclerView;
     private ProgressBar mSpinnerProgress;
-    private LinearLayout mNoInternetLayout;
+    private LinearLayout mNoInternetLayout, mNoFavoritesLayout;
     private MoviesAdapter mAdapter;
     private RequestMoviesTask mTask;
 
@@ -78,6 +79,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
         View view = inflater.inflate(R.layout.fragment_movies_grid, container, false);
 
         mNoInternetLayout = (LinearLayout) view.findViewById(R.id.no_internet_layout);
+        mNoFavoritesLayout = (LinearLayout) view.findViewById(R.id.no_favorites_layout);
         mSpinnerProgress = (ProgressBar) view.findViewById(R.id.spinner_progress);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.movies_grid_recyclerview);
         mRecyclerView.setHasFixedSize(true);
@@ -95,7 +97,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
             }
         });
 
-        if (mMovies == null) {
+        if (mMovies == null || mMovies.size() == 0) {
             requestMovies();
         } else {
             bindMoviesToView(mMovies);
@@ -120,6 +122,12 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
 
     private void bindMoviesToView(ArrayList<Movie> movies) {
         mMovies = movies;
+
+        if (mMoviesFilter.equals(Movie.MOVIE_FAVORITES) && mMovies.size() == 0) {
+            showNoFavorites();
+            return;
+        }
+
         mAdapter = new MoviesAdapter(getContext(), mMovies, this);
         mRecyclerView.setAdapter(mAdapter);
         showMoviesGrid();
@@ -128,17 +136,20 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
     private void showSpinner() {
         mRecyclerView.setVisibility(View.GONE);
         mNoInternetLayout.setVisibility(View.GONE);
+        mNoFavoritesLayout.setVisibility(View.GONE);
         mSpinnerProgress.setVisibility(View.VISIBLE);
     }
 
     private void hideSpinner() {
         mSpinnerProgress.setVisibility(View.GONE);
         mNoInternetLayout.setVisibility(View.GONE);
+        mNoFavoritesLayout.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     private void showMoviesGrid() {
         mNoInternetLayout.setVisibility(View.GONE);
+        mNoFavoritesLayout.setVisibility(View.GONE);
         mSpinnerProgress.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
     }
@@ -146,15 +157,21 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
     private void showNoInternet() {
         mRecyclerView.setVisibility(View.GONE);
         mSpinnerProgress.setVisibility(View.GONE);
+        mNoFavoritesLayout.setVisibility(View.GONE);
         mNoInternetLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void showNoFavorites() {
+        mRecyclerView.setVisibility(View.GONE);
+        mSpinnerProgress.setVisibility(View.GONE);
+        mNoInternetLayout.setVisibility(View.GONE);
+        mNoFavoritesLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onProcessFinish(Object output, String taskType) {
         hideSpinner();
-        if (output != null) {
-            bindMoviesToView((ArrayList<Movie>) output);
-        }
+        bindMoviesToView((ArrayList<Movie>) output);
     }
 
     @Override
@@ -184,6 +201,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
 
                     int operation = data.getIntExtra(Movie.EXTRA_MOVIE_OPERATION, 0);
                     Movie movie = data.getParcelableExtra(Movie.EXTRA_MOVIE);
+
                     switch (operation) {
                         case Movie.FLAG_ADDED:
                             mMovies.set(mMovieClickedPosition, movie);
@@ -196,6 +214,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
                             }
                             break;
                     }
+
                     mAdapter.notifyItemChanged(mMovieClickedPosition);
 
                     break;
