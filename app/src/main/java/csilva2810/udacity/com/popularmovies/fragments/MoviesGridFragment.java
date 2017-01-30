@@ -2,14 +2,12 @@ package csilva2810.udacity.com.popularmovies.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,10 +95,14 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
             }
         });
 
-        if (mMovies == null || mMovies.size() == 0) {
-            requestMovies();
+        if (!mMoviesFilter.equals(Movie.MOVIE_FAVORITES)) {
+            if (mMovies == null) {
+                requestMovies();
+            } else {
+                bindMoviesToView(mMovies);
+            }
         } else {
-            bindMoviesToView(mMovies);
+            requestMovies();
         }
 
         return view;
