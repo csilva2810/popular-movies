@@ -17,6 +17,10 @@
 
     <include
         android:id="@+id/no_internet_layout"
-        layout="@layout/layout_no_internet"/>
+        layout="@layout/layout_no_internet" />
+
+    <include
+        android:id="@+id/no_favorites_layout"
+        layout="@layout/layout_no_favorites" />
 
 </LinearLayout>
