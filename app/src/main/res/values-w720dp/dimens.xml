@@ -1,0 +1,7 @@
+<resources>
+
+    <dimen name="collapsing_toolbar_imageview_height">300dp</dimen>
+    <dimen name="details_margin">100dp</dimen>
+    <dimen name="details_overlapTop">100dp</dimen>
+
+</resources>
