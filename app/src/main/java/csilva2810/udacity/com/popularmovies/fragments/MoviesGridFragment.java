@@ -2,10 +2,6 @@ package csilva2810.udacity.com.popularmovies.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-<<<<<<< HEAD
-import android.os.AsyncTask;
-=======
->>>>>>> 7a194e4a7781e16681365b2386cdf3b6cbe8da10
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -130,15 +126,12 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
 
     private void bindMoviesToView(ArrayList<Movie> movies) {
         mMovies = movies;
-<<<<<<< HEAD
-=======
 
         if (mMoviesFilter.equals(Movie.MOVIE_FAVORITES) && mMovies.size() == 0) {
             showNoFavorites();
             return;
         }
 
->>>>>>> 7a194e4a7781e16681365b2386cdf3b6cbe8da10
         mAdapter = new MoviesAdapter(getContext(), mMovies, this);
         mRecyclerView.setAdapter(mAdapter);
         showMoviesGrid();
@@ -147,29 +140,20 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
     private void showSpinner() {
         mRecyclerView.setVisibility(View.GONE);
         mNoInternetLayout.setVisibility(View.GONE);
-<<<<<<< HEAD
-=======
         mNoFavoritesLayout.setVisibility(View.GONE);
->>>>>>> 7a194e4a7781e16681365b2386cdf3b6cbe8da10
         mSpinnerProgress.setVisibility(View.VISIBLE);
     }
 
     private void hideSpinner() {
         mSpinnerProgress.setVisibility(View.GONE);
         mNoInternetLayout.setVisibility(View.GONE);
-<<<<<<< HEAD
-=======
         mNoFavoritesLayout.setVisibility(View.GONE);
->>>>>>> 7a194e4a7781e16681365b2386cdf3b6cbe8da10
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     private void showMoviesGrid() {
         mNoInternetLayout.setVisibility(View.GONE);
-<<<<<<< HEAD
-=======
         mNoFavoritesLayout.setVisibility(View.GONE);
->>>>>>> 7a194e4a7781e16681365b2386cdf3b6cbe8da10
         mSpinnerProgress.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
     }
@@ -177,17 +161,6 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
     private void showNoInternet() {
         mRecyclerView.setVisibility(View.GONE);
         mSpinnerProgress.setVisibility(View.GONE);
-<<<<<<< HEAD
-        mNoInternetLayout.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onProcessFinish(Object output, String taskType) {
-        hideSpinner();
-        if (output != null) {
-            bindMoviesToView((ArrayList<Movie>) output);
-        }
-=======
         mNoFavoritesLayout.setVisibility(View.GONE);
         mNoInternetLayout.setVisibility(View.VISIBLE);
     }
@@ -203,7 +176,6 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
     public void onProcessFinish(Object output, String taskType) {
         hideSpinner();
         bindMoviesToView((ArrayList<Movie>) output);
->>>>>>> 7a194e4a7781e16681365b2386cdf3b6cbe8da10
     }
 
     @Override
@@ -233,10 +205,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
 
                     int operation = data.getIntExtra(Movie.EXTRA_MOVIE_OPERATION, 0);
                     Movie movie = data.getParcelableExtra(Movie.EXTRA_MOVIE);
-<<<<<<< HEAD
-=======
 
->>>>>>> 7a194e4a7781e16681365b2386cdf3b6cbe8da10
                     switch (operation) {
                         case Movie.FLAG_ADDED:
                             mMovies.set(mMovieClickedPosition, movie);
@@ -249,10 +218,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
                             }
                             break;
                     }
-<<<<<<< HEAD
-=======
 
->>>>>>> 7a194e4a7781e16681365b2386cdf3b6cbe8da10
                     mAdapter.notifyItemChanged(mMovieClickedPosition);
 
                     break;
