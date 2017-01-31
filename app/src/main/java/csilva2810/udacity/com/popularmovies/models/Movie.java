@@ -48,6 +48,46 @@ public class Movie implements Parcelable {
     private long releaseDate;
     private boolean isFavorite;
 
+    protected Movie(Parcel in) {
+        id = in.readLong();
+        title = in.readString();
+        posterImage = in.readString();
+        backdropImage = in.readString();
+        overview = in.readString();
+        voteAverage = in.readDouble();
+        releaseDate = in.readLong();
+        isFavorite = in.readByte() != 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(title);
+        dest.writeString(posterImage);
+        dest.writeString(backdropImage);
+        dest.writeString(overview);
+        dest.writeDouble(voteAverage);
+        dest.writeLong(releaseDate);
+        dest.writeByte((byte) (isFavorite ? 1 : 0));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
     public boolean isFavorite() {
         return isFavorite;
     }
@@ -64,17 +104,6 @@ public class Movie implements Parcelable {
         this.overview = overview;
         this.voteAverage = voteAverage;
         this.releaseDate = releaseDate;
-    }
-
-    public Movie(Parcel movie) {
-        this.id = movie.readLong();
-        this.title = movie.readString();
-        this.posterImage = movie.readString();
-        this.backdropImage = movie.readString();
-        this.overview = movie.readString();
-        this.voteAverage = movie.readDouble();
-        this.releaseDate = movie.readLong();
-        this.isFavorite = movie.readByte() != 0;
     }
 
     public String getBackdropImage() {
@@ -249,32 +278,4 @@ public class Movie implements Parcelable {
         return null;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
-        dest.writeString(title);
-        dest.writeString(posterImage);
-        dest.writeString(backdropImage);
-        dest.writeString(overview);
-        dest.writeDouble(voteAverage);
-        dest.writeLong(releaseDate);
-        dest.writeByte((byte) (isFavorite ? 1 : 0));
-    }
-
-    static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
-        @Override
-        public Movie createFromParcel(Parcel movie) {
-            return new Movie(movie);
-        }
-
-        @Override
-        public Movie[] newArray(int i) {
-            return new Movie[i];
-        }
-    };
 }
