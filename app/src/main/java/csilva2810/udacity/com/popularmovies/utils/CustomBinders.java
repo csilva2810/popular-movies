@@ -29,7 +29,7 @@ public class CustomBinders {
 
     @BindingAdapter({"android:src", "placeholder"})
     public static void loadImage(ImageView view, String url, Drawable plaholder) {
-                Picasso.with(view.getContext())
+        Picasso.with(view.getContext())
                 .load(url)
                 .placeholder(plaholder)
                 .into(view);

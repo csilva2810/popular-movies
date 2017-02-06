@@ -3,23 +3,21 @@ package csilva2810.udacity.com.popularmovies.adapters;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import csilva2810.udacity.com.popularmovies.R;
+import csilva2810.udacity.com.popularmovies.databinding.ItemVideosBinding;
 import csilva2810.udacity.com.popularmovies.models.Video;
 
-public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosViewHolder> {
+public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.ViewHolder> {
 
     private static final String LOG_TAG = VideosAdapter.class.getSimpleName();
 
@@ -31,25 +29,27 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
         mVideosList = videosList;
     }
 
-    class VideosViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
-        String videoKey;
-        ImageView videoThumbnail, shareIcon;
-        TextView videoName;
+        private ItemVideosBinding binding;
 
-        VideosViewHolder(View itemView) {
-            super(itemView);
+        public ViewHolder(ItemVideosBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
 
-            videoThumbnail = (ImageView) itemView.findViewById(R.id.video_image_thumb);
-            shareIcon = (ImageView) itemView.findViewById(R.id.video_share_icon);
-            videoName = (TextView) itemView.findViewById(R.id.video_name_textview);
+        public void bind(final int position) {
+            final Video video = mVideosList.get(position);
+            final String videoUrl = "http://www.youtube.com/watch?v=" + video.getKey();
 
-            itemView.setOnClickListener(new View.OnClickListener() {
+            binding.setVideo(video);
+
+            binding.videoCardview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent youtubeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoKey));
+                    Intent youtubeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video.getKey()));
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("http://www.youtube.com/watch?v=" + videoKey));
+                            Uri.parse(videoUrl));
                     try {
                         mContext.startActivity(youtubeIntent);
                     } catch (ActivityNotFoundException ex) {
@@ -58,49 +58,37 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosView
                 }
             });
 
-            shareIcon.setOnClickListener(new View.OnClickListener() {
+            binding.videoShareIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent shareIntent = new Intent();
                     shareIntent.setAction(Intent.ACTION_SEND);
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, "http://youtube.com/watch?v=" + videoKey);
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, videoUrl);
                     shareIntent.setType("text/plain");
                     mContext.startActivity(shareIntent);
                 }
             });
 
+            binding.executePendingBindings();
         }
 
     }
 
-    public VideosAdapter.VideosViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view =
-                LayoutInflater.from(mContext).inflate(R.layout.item_videos_list, parent, false);
-        return new VideosAdapter.VideosViewHolder(view);
-
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        ItemVideosBinding binding = DataBindingUtil.inflate(inflater, R.layout.item_videos_list, parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(VideosAdapter.VideosViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
 
         if (position == 0) {
-            Log.d(LOG_TAG, "Position: " + position);
             holder.itemView.setPadding(16, 0, 0, 0);
         }
 
         if (mVideosList != null) {
-            Video video = mVideosList.get(position);
-            holder.videoName.setText(video.getName());
-            holder.videoKey = video.getKey();
-
-            // possible sizes (default, hqdefault, mqdefault, sddefault, maxresdefault)
-            String thumbUrl = "https://img.youtube.com/vi/" + holder.videoKey + "/sddefault.jpg";
-            Picasso.with(mContext)
-                    .load(thumbUrl)
-                    .placeholder(R.drawable.placeholder_video)
-                    .into(holder.videoThumbnail);
-
-            Log.d(LOG_TAG, thumbUrl);
+            holder.bind(position);
         }
 
     }

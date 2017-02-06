@@ -73,6 +73,11 @@ public class Video {
         this.type = type;
     }
 
+    public String getThumbUrl() {
+        // possible sizes (default, hqdefault, mqdefault, sddefault, maxresdefault)
+        return "https://img.youtube.com/vi/" + getKey() + "/sddefault.jpg";
+    }
+
     public static List<Video> parseJson(String json) {
         List<Video> videos = new ArrayList<>();
 

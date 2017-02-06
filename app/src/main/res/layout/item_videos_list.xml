@@ -1,68 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/MyCardView"
-    android:layout_width="@dimen/video_item_width"
-    android:layout_height="wrap_content">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    <data class="ItemVideosBinding">
+        <variable
+            name="video"
+            type="csilva2810.udacity.com.popularmovies.models.Video" />
+    </data>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/video_image_thumb"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/video_thumb_height"
-                android:scaleType="centerCrop"
-                android:src="@drawable/test_image" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/layout_image_overlay" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_play_circle_filled_white" />
-
-        </FrameLayout>
+    <android.support.v7.widget.CardView
+        android:id="@+id/video_cardview"
+        style="@style/MyCardView"
+        android:layout_width="@dimen/video_item_width"
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/cardview_tile_padding"
-            android:paddingRight="@dimen/cardview_tile_padding">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/video_name_textview"
-                android:layout_width="0dp"
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/video_image_thumb"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/video_thumb_height"
+                    android:scaleType="centerCrop"
+                    android:src="@{video.getThumbUrl()}"
+                    app:placeholder="@{@drawable/placeholder_video}" />
+
+                <ImageView
+                    android:id="@+id/teste_carlos"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/layout_image_overlay" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:srcCompat="@drawable/ic_play_circle_filled_white" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="5"
                 android:gravity="center_vertical"
-                android:lines="2" />
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/cardview_tile_padding"
+                android:paddingRight="@dimen/cardview_tile_padding">
 
-            <ImageButton
-                android:id="@+id/video_share_icon"
-                style="?attr/borderlessButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:tint="@color/button_grey"
-                app:srcCompat="@drawable/ic_share_black_24dp" />
+                <TextView
+                    android:id="@+id/video_name_textview"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="5"
+                    android:gravity="center_vertical"
+                    android:text="@{video.name}"
+                    android:lines="2" />
+
+                <ImageButton
+                    android:id="@+id/video_share_icon"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:tint="@color/button_grey"
+                    app:srcCompat="@drawable/ic_share_black_24dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </android.support.v7.widget.CardView>
 
-</android.support.v7.widget.CardView>
+</layout>
