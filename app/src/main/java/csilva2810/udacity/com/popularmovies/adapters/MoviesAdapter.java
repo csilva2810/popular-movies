@@ -1,6 +1,7 @@
 package csilva2810.udacity.com.popularmovies.adapters;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,9 +17,10 @@ import java.util.List;
 import java.util.Set;
 
 import csilva2810.udacity.com.popularmovies.R;
+import csilva2810.udacity.com.popularmovies.databinding.ItemMoviesBinding;
 import csilva2810.udacity.com.popularmovies.models.Movie;
 
-public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
 
     private List<Movie> mMovies;
     private Context mContext;
@@ -35,7 +37,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         try {
             mListener = listener;
         } catch (ClassCastException e) {
-            Log.d(LOG_TAG, "Activity must implement OnMovieClickListener()");
+            Log.d(LOG_TAG, "Activity must implement OnMovieClickListener");
         }
         setFavoriteMovies();
     }
@@ -51,42 +53,30 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         }
     }
 
-    class MovieViewHolder extends RecyclerView.ViewHolder implements OnMovieClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements OnMovieClickListener {
 
-        CardView cv;
-        ImageView coverImageView, favoriteIcon;
-        TextView titleTextView;
+        private ItemMoviesBinding binding;
 
-        MovieViewHolder(View itemView) {
+        ViewHolder(ItemMoviesBinding binding) {
 
-            super(itemView);
-            cv = (CardView) itemView.findViewById(R.id.movie_card_view);
-            coverImageView = (ImageView) itemView.findViewById(R.id.movie_cover);
-            favoriteIcon = (ImageView) itemView.findViewById(R.id.favorite_icon);
-            titleTextView = (TextView) itemView.findViewById(R.id.movie_title);
+            super(binding.getRoot());
+            this.binding = binding;
 
         }
 
         void bind(final int position) {
+
             final Movie movie = mMovies.get(position);
 
-            if (movie.isFavorite()) {
-                favoriteIcon.setVisibility(View.VISIBLE);
-            }
+            binding.setMovie(movie);
+            binding.executePendingBindings();
 
-            titleTextView.setText(movie.getTitle());
-
-            itemView.setOnClickListener(new View.OnClickListener() {
+            binding.movieCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onMovieClick(movie, position, coverImageView);
+                    onMovieClick(movie, position, binding.movieCover);
                 }
             });
-
-            Picasso.with(mContext)
-                    .load(movie.getPosterImage())
-                    .placeholder(R.drawable.placeholder_video)
-                    .into(coverImageView);
 
         }
 
@@ -97,13 +87,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     }
 
     @Override
-    public MoviesAdapter.MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_movies_grid, parent, false);
-        return new MovieViewHolder(view);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        ItemMoviesBinding binding = DataBindingUtil.inflate(inflater, R.layout.item_movies_grid, parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(MoviesAdapter.MovieViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         holder.bind(position);
     }
 
@@ -113,11 +104,4 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         return mMovies.size();
     }
 
-    @Override
-    public void onViewRecycled(MovieViewHolder holder) {
-        // Unsing this method to set favoriteIcon's Visibility to GONE
-        // since this holder will be used to another movie which may not be a favorite
-        holder.favoriteIcon.setVisibility(View.GONE);
-        super.onViewRecycled(holder);
-    }
 }
