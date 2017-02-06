@@ -2,6 +2,7 @@ package csilva2810.udacity.com.popularmovies.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import csilva2810.udacity.com.popularmovies.R;
+import csilva2810.udacity.com.popularmovies.databinding.ItemReviewsBinding;
 import csilva2810.udacity.com.popularmovies.models.Review;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHolder> {
@@ -31,37 +33,38 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView authorIcon;
-        TextView authorName;
-        TextView content;
-        Button readMoreButton;
+        ItemReviewsBinding binding;
 
-        ViewHolder(View itemView) {
-            super(itemView);
+        public ViewHolder(ItemReviewsBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
 
-            authorIcon = (ImageView) itemView.findViewById(R.id.icon_author);
-            authorName = (TextView) itemView.findViewById(R.id.review_author_name);
-            content = (TextView) itemView.findViewById(R.id.review_content);
-            readMoreButton = (Button) itemView.findViewById(R.id.review_read_more_button);
+        public void bind(final int position) {
+            final Review review = mReviewsList.get(position);
 
-            readMoreButton.setOnClickListener(new View.OnClickListener() {
+            binding.setReview(review);
+
+            binding.reviewReadMoreButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Uri intentUri = Uri.parse( (String) view.getTag() );
+                    Uri intentUri = Uri.parse( review.getUrl() );
                     mContext.startActivity(new Intent(Intent.ACTION_VIEW, intentUri));
                 }
             });
 
+            binding.executePendingBindings();
+
         }
+
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        return new ViewHolder(
-                LayoutInflater.from(mContext)
-                .inflate(R.layout.item_reviews_list, parent, false)
-        );
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        ItemReviewsBinding binding = DataBindingUtil.inflate(inflater, R.layout.item_reviews_list, parent, false);
+        return new ViewHolder(binding);
 
     }
 
@@ -69,11 +72,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         if (mReviewsList != null) {
-            Review review = mReviewsList.get(position);
-
-            holder.authorName.setText(review.getAuthorName());
-            holder.content.setText(review.getResumedContent());
-            holder.readMoreButton.setTag(review.getUrl());
+            holder.bind(position);
         }
 
     }
