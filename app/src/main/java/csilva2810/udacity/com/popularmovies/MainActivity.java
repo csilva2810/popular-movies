@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import csilva2810.udacity.com.popularmovies.constants.App;
-import csilva2810.udacity.com.popularmovies.fragments.MoviesGridFragment;
+import csilva2810.udacity.com.popularmovies.fragments.MoviesFragment;
 import csilva2810.udacity.com.popularmovies.models.Movie;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             Bundle bundle = new Bundle();
             bundle.putString(App.SHARED_KEY_MOVIE_FILTER, fragmentTypes.get(i));
 
-            MoviesGridFragment fragment = new MoviesGridFragment();
+            MoviesFragment fragment = new MoviesFragment();
             fragment.setArguments(bundle);
 
             adapter.addFragment(fragment, fragmentTitles.get(i));

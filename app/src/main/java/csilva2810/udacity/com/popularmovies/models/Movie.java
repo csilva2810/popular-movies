@@ -3,10 +3,16 @@ package csilva2810.udacity.com.popularmovies.models;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
+import android.databinding.Observable;
+import android.databinding.PropertyChangeRegistry;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import com.android.databinding.library.baseAdapters.BR;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +31,7 @@ import csilva2810.udacity.com.popularmovies.utils.DateUtils;
  * Created by carlinhos on 12/8/16.
  */
 
-public class Movie implements Parcelable {
+public class Movie extends BaseObservable implements Parcelable {
 
     private static final String LOG_TAG = Movie.class.getSimpleName();
     public static final String MOVIE_FAVORITES = "favorites";
@@ -46,7 +52,7 @@ public class Movie implements Parcelable {
     private String overview;
     private double voteAverage;
     private long releaseDate;
-    private boolean isFavorite;
+    private boolean favorite;
 
     protected Movie(Parcel in) {
         id = in.readLong();
@@ -56,7 +62,7 @@ public class Movie implements Parcelable {
         overview = in.readString();
         voteAverage = in.readDouble();
         releaseDate = in.readLong();
-        isFavorite = in.readByte() != 0;
+        favorite = in.readByte() != 0;
     }
 
     @Override
@@ -68,7 +74,7 @@ public class Movie implements Parcelable {
         dest.writeString(overview);
         dest.writeDouble(voteAverage);
         dest.writeLong(releaseDate);
-        dest.writeByte((byte) (isFavorite ? 1 : 0));
+        dest.writeByte((byte) (favorite ? 1 : 0));
     }
 
     @Override
@@ -88,12 +94,14 @@ public class Movie implements Parcelable {
         }
     };
 
+    @Bindable
     public boolean isFavorite() {
-        return isFavorite;
+        return this.favorite;
     }
 
     public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
+        this.favorite = favorite;
+        notifyPropertyChanged(BR.favorite);
     }
 
     public Movie(long id, String title, String posterImage, String backdropImage, String overview, double voteAverage, long releaseDate) {
@@ -150,6 +158,10 @@ public class Movie implements Parcelable {
         return voteAverage;
     }
 
+    public String getDisplayVoteAverage(Context context) {
+        return context.getString(R.string.average_placeholder, String.valueOf(getVoteAverage()));
+    }
+
     public void setVoteAverage(double voteAverage) {
         this.voteAverage = voteAverage;
     }
@@ -158,13 +170,17 @@ public class Movie implements Parcelable {
         return releaseDate;
     }
 
+    public String getDisplayReleaseDate() {
+        return DateUtils.getDisplayDate(releaseDate);
+    }
+
     public void setReleaseDate(long releaseDate) {
         this.releaseDate = releaseDate;
     }
 
     @Override
     public String toString() {
-        return  this.getId() + " - " +
+        return this.getId() + " - " +
                 this.getTitle() + " - " +
                 this.getReleaseDate() + " - " +
                 this.getBackdropImage() + " - " +
@@ -204,7 +220,7 @@ public class Movie implements Parcelable {
     }
 
     public static ArrayList<Movie> getFavorites(Context context) {
-        String columns[] = new String[] {
+        String columns[] = new String[]{
                 MovieContract.MovieEntry.COLUMN_API_ID,
                 MovieContract.MovieEntry.COLUMN_TITLE,
                 MovieContract.MovieEntry.COLUMN_POSTER,
@@ -257,7 +273,7 @@ public class Movie implements Parcelable {
             int INDEX_APP_ID = 0;
             Cursor c = context.getContentResolver().query(
                     MovieContract.MovieEntry.getMovieUri(),
-                    new String[] {MovieContract.MovieEntry.COLUMN_API_ID},
+                    new String[]{MovieContract.MovieEntry.COLUMN_API_ID},
                     null, null, null
             );
 

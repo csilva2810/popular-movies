@@ -27,10 +27,10 @@ import csilva2810.udacity.com.popularmovies.services.RequestMoviesTask;
 import csilva2810.udacity.com.popularmovies.utils.AsyncTaskDelegate;
 import csilva2810.udacity.com.popularmovies.utils.ConversionUtils;
 
-public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
+public class MoviesFragment extends Fragment implements AsyncTaskDelegate,
         MoviesAdapter.OnMovieClickListener {
 
-    private static final String LOG_TAG = MoviesGridFragment.class.getSimpleName();
+    private static final String LOG_TAG = MoviesFragment.class.getSimpleName();
 
     private static final String KEY_CLICKED_POSITION = "KEY_CLICKED_POSITION";
     private static final String KEY_MOVIES = "KEY_MOVIES";
@@ -74,7 +74,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
         int gridColumns = getActivity().getResources().getInteger(R.integer.movies_grid_columns);
         int gridGutter = getActivity().getResources().getInteger(R.integer.movies_grid_gutter);
 
-        View view = inflater.inflate(R.layout.fragment_movies_grid, container, false);
+        View view = inflater.inflate(R.layout.fragment_movies, container, false);
 
         mNoInternetLayout = (LinearLayout) view.findViewById(R.id.no_internet_layout);
         mNoFavoritesLayout = (LinearLayout) view.findViewById(R.id.no_favorites_layout);
@@ -120,7 +120,7 @@ public class MoviesGridFragment extends Fragment implements AsyncTaskDelegate,
         }
 
         showSpinner();
-        mTask = new RequestMoviesTask(getActivity(), MoviesGridFragment.this);
+        mTask = new RequestMoviesTask(getActivity(), MoviesFragment.this);
         mTask.execute(mMoviesFilter);
     }
 

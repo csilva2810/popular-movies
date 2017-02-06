@@ -8,11 +8,10 @@ import android.util.Log;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import csilva2810.udacity.com.popularmovies.BuildConfig;
 import csilva2810.udacity.com.popularmovies.constants.MoviesApi;
-import csilva2810.udacity.com.popularmovies.fragments.MoviesGridFragment;
+import csilva2810.udacity.com.popularmovies.fragments.MoviesFragment;
 import csilva2810.udacity.com.popularmovies.models.Movie;
 import csilva2810.udacity.com.popularmovies.utils.AsyncTaskDelegate;
 import csilva2810.udacity.com.popularmovies.utils.HttpRequest;
@@ -22,7 +21,7 @@ import csilva2810.udacity.com.popularmovies.utils.HttpRequest;
  */
 public class RequestMoviesTask extends AsyncTask<String, Integer, ArrayList<Movie>> {
 
-    public static final String LOG_TAG = MoviesGridFragment.class.getSimpleName();
+    public static final String LOG_TAG = MoviesFragment.class.getSimpleName();
     private AsyncTaskDelegate mDelegate;
     private Context mContext;
 

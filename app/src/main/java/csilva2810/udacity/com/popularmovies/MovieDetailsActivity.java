@@ -4,34 +4,31 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.SQLException;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import csilva2810.udacity.com.popularmovies.database.MovieContract;
+import csilva2810.udacity.com.popularmovies.databinding.MovieDetailsBinding;
 import csilva2810.udacity.com.popularmovies.fragments.ReviewsFragment;
 import csilva2810.udacity.com.popularmovies.fragments.VideosFragment;
 import csilva2810.udacity.com.popularmovies.listeners.OnFragmentInteractionListener;
 import csilva2810.udacity.com.popularmovies.models.Movie;
 import csilva2810.udacity.com.popularmovies.utils.ColorUtils;
-import csilva2810.udacity.com.popularmovies.utils.DateUtils;
 
-public class MovieDetailsActivity extends AppCompatActivity implements OnFragmentInteractionListener {
+public class MovieDetailsActivity extends AppCompatActivity
+        implements OnFragmentInteractionListener {
 
     private static final String LOG_TAG = MovieDetailsActivity.class.getSimpleName();
     private static final String KEY_VIDEOS_FRAGMENT = "videos_fragment_key";
@@ -39,19 +36,15 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
     private static final String KEY_MOVIE = "movie_object_key";
     public static final String ARG_MOVIEID = "arg_movieid";
 
-    private CollapsingToolbarLayout mCollapsingToolbar;
-    private ImageView mMovieBackdrop;
-    private FloatingActionButton mFab;
-
     private Movie mMovie;
-    private Toolbar mToolbar;
     private VideosFragment mVideosFragment;
     private ReviewsFragment mReviewsFragment;
+    private MovieDetailsBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_details);
+        // setContentView(R.layout.activity_movie_details);
 
         if (savedInstanceState == null) {
             mMovie = getIntent().getParcelableExtra(Movie.EXTRA_MOVIE);
@@ -66,26 +59,17 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
                     .getFragment(savedInstanceState, KEY_REVIEWS_FRAGMENT);
         }
 
-        mCollapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_details);
+        mBinding.setMovie(mMovie);
 
-        mCollapsingToolbar.setTitle(mMovie.getTitle());
-        mToolbar.setTitle(mMovie.getTitle());
-        setSupportActionBar(mToolbar);
-
-        TextView movieTitle = (TextView) findViewById(R.id.movie_title_textview);
-        movieTitle.setText(mMovie.getTitle());
-
-        ImageView movieCover = (ImageView) findViewById(R.id.movie_cover_imageview);
-        Picasso.with(MovieDetailsActivity.this)
-                .load(mMovie.getPosterImage())
-                .placeholder(R.drawable.placeholder_video)
-                .into(movieCover);
+        mBinding.collapsingToolbar.setTitle(mMovie.getTitle());
+        mBinding.toolbar.setTitle(mMovie.getTitle());
+        setSupportActionBar(mBinding.toolbar);
 
         Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                mMovieBackdrop.setImageBitmap(bitmap);
+                mBinding.movieBackdropImageview.setImageBitmap(bitmap);
                 setToolbarColor(bitmap);
             }
             @Override
@@ -94,33 +78,20 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
             }
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable) {
-                mMovieBackdrop.setImageDrawable(placeHolderDrawable);
-                Log.d(LOG_TAG, "Prepare Load: " + placeHolderDrawable);
+                mBinding.movieBackdropImageview.setImageDrawable(placeHolderDrawable);
             }
         };
 
-        mMovieBackdrop = (ImageView) findViewById(R.id.movie_backdrop_imageview);
-        mMovieBackdrop.setTag(target);
+
+        mBinding.movieBackdropImageview.setTag(target);
         Picasso.with(MovieDetailsActivity.this)
                 .load(mMovie.getBackdropImage())
                 .placeholder(R.drawable.placeholder_video)
                 .into(target);
 
-        TextView voteAverageTextView = (TextView) findViewById(R.id.movie_vote_average);
-        String voteAverage = getString(R.string.average_placeholder, String.valueOf(mMovie.getVoteAverage()));
-        voteAverageTextView.setText(voteAverage);
-
-        TextView releaseDateTextView = (TextView) findViewById(R.id.movie_release_date);
-        releaseDateTextView.setText(DateUtils.getDisplayDate(Long.valueOf(mMovie.getReleaseDate())));
-
-        TextView movieOverviewTextView = (TextView) findViewById(R.id.movie_overview);
-        movieOverviewTextView.setText(mMovie.getOverview());
-
-        mFab = (FloatingActionButton) findViewById(R.id.fab_add_as_favorite);
-        mFab.setOnClickListener(new View.OnClickListener() {
+        mBinding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (mMovie.isFavorite()) {
                     if (!removeFromFavorites(mMovie)) {
                         snackMessage(view, getString(R.string.message_favorite_error));
@@ -135,11 +106,9 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
                     snackMessage(view, getString(R.string.message_add_favorite_success));
                 }
                 mMovie.setFavorite(!mMovie.isFavorite());
-                toggleFabIcon();
                 setActivityResult();
             }
         });
-        toggleFabIcon();
 
     }
 
@@ -188,14 +157,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
         outState.putParcelable(KEY_MOVIE, mMovie);
 
         super.onSaveInstanceState(outState);
-    }
-
-    private void toggleFabIcon() {
-        int icon = mMovie.isFavorite() ?
-                R.drawable.ic_star_24dp :
-                R.drawable.ic_star_border_24dp;
-
-        mFab.setImageResource(icon);
     }
 
     private boolean addToFavorites(final Movie movie) {
@@ -269,8 +230,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     (getWindow()).setStatusBarColor(statusBarColor);
                 }
-                mCollapsingToolbar.setContentScrimColor(toolbarBackgroundColor);
-                mCollapsingToolbar.setCollapsedTitleTextColor(toolbarTitleColor);
+                mBinding.collapsingToolbar.setContentScrimColor(toolbarBackgroundColor);
+                mBinding.collapsingToolbar.setCollapsedTitleTextColor(toolbarTitleColor);
             }
 
             }

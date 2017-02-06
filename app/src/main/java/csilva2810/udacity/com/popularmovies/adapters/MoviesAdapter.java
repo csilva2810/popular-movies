@@ -1,7 +1,6 @@
 package csilva2810.udacity.com.popularmovies.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,9 +15,8 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.Set;
 
-import csilva2810.udacity.com.popularmovies.models.Movie;
-import csilva2810.udacity.com.popularmovies.MovieDetailsActivity;
 import csilva2810.udacity.com.popularmovies.R;
+import csilva2810.udacity.com.popularmovies.models.Movie;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
 
