@@ -1,49 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/movie_card_view"
-    style="@style/MyCardView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <data class="ItemMoviesBinding">
+        <import type="android.view.View" alias="View"/>
+        <variable
+            name="movie"
+            type="csilva2810.udacity.com.popularmovies.models.Movie" />
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/movie_card_view"
+        style="@style/MyCardView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/movie_cover"
-                android:transitionName="@string/transition_movie_cover"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/cardview_image_height"
-                android:scaleType="centerCrop"
-                android:src="@drawable/placeholder_video" />
+                android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/favorite_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginEnd="@dimen/favorite_icon_margin"
-                android:layout_marginRight="@dimen/favorite_icon_margin"
-                android:layout_marginTop="@dimen/favorite_icon_margin"
-                android:tint="@color/yellow_700"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_star_24dp" />
+                <ImageView
+                    android:id="@+id/movie_cover"
+                    android:transitionName="@string/transition_movie_cover"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/cardview_image_height"
+                    android:scaleType="centerCrop"
+                    android:src="@{movie.posterImage}"
+                    app:placeholder="@{@drawable/placeholder_video}" />
 
-        </FrameLayout>
+                <ImageView
+                    android:id="@+id/favorite_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="@dimen/favorite_icon_margin"
+                    android:layout_marginRight="@dimen/favorite_icon_margin"
+                    android:layout_marginTop="@dimen/favorite_icon_margin"
+                    android:tint="@color/yellow_700"
+                    android:visibility="@{movie.favorite ? View.VISIBLE : View.GONE}"
+                    app:srcCompat="@drawable/ic_star_24dp" />
 
+            </FrameLayout>
 
-        <TextView
-            style="@style/CardViewTile"
-            android:id="@+id/movie_title"
-            android:ellipsize="end"
-            android:lines="1" />
+            <TextView
+                style="@style/CardViewTile"
+                android:id="@+id/movie_title"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="@{movie.title}" />
 
-    </LinearLayout>
+        </LinearLayout>
 
-</android.support.v7.widget.CardView>
+    </android.support.v7.widget.CardView>
+
+</layout>
