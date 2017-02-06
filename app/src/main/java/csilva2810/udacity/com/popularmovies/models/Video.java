@@ -78,6 +78,10 @@ public class Video {
         return "https://img.youtube.com/vi/" + getKey() + "/sddefault.jpg";
     }
 
+    public String getYoutubeUrl() {
+        return "http://www.youtube.com/watch?v=" + getKey();
+    }
+
     public static List<Video> parseJson(String json) {
         List<Video> videos = new ArrayList<>();
 

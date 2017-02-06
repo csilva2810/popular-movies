@@ -40,7 +40,6 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.ViewHolder
 
         public void bind(final int position) {
             final Video video = mVideosList.get(position);
-            final String videoUrl = "http://www.youtube.com/watch?v=" + video.getKey();
 
             binding.setVideo(video);
 
@@ -49,7 +48,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.ViewHolder
                 public void onClick(View view) {
                     Intent youtubeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + video.getKey()));
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse(videoUrl));
+                            Uri.parse(video.getYoutubeUrl()));
                     try {
                         mContext.startActivity(youtubeIntent);
                     } catch (ActivityNotFoundException ex) {
@@ -63,7 +62,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.ViewHolder
                 public void onClick(View view) {
                     Intent shareIntent = new Intent();
                     shareIntent.setAction(Intent.ACTION_SEND);
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, videoUrl);
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, video.getYoutubeUrl());
                     shareIntent.setType("text/plain");
                     mContext.startActivity(shareIntent);
                 }
