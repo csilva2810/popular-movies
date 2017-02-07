@@ -87,6 +87,7 @@ public class MoviesFragment extends Fragment implements AsyncTaskDelegate,
         mRecyclerView.addItemDecoration(
                 new GridSpacingItemDecoration(gridColumns, ConversionUtils.dpToPx(getActivity(), gridGutter), true)
         );
+        mRecyclerView.setAdapter(mAdapter);
 
         Button tryAgainButton = (Button) mNoInternetLayout.findViewById(R.id.button_try_again);
         tryAgainButton.setOnClickListener(new View.OnClickListener() {

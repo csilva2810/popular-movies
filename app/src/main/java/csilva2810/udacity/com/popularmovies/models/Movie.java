@@ -5,8 +5,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.databinding.Observable;
-import android.databinding.PropertyChangeRegistry;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -54,7 +52,7 @@ public class Movie extends BaseObservable implements Parcelable {
     private long releaseDate;
     private boolean favorite;
 
-    protected Movie(Parcel in) {
+    public Movie(Parcel in) {
         id = in.readLong();
         title = in.readString();
         posterImage = in.readString();
@@ -82,7 +80,7 @@ public class Movie extends BaseObservable implements Parcelable {
         return 0;
     }
 
-    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         @Override
         public Movie createFromParcel(Parcel in) {
             return new Movie(in);

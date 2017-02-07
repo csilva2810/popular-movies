@@ -28,6 +28,7 @@ public class VideosFragment extends Fragment implements AsyncTaskDelegate {
 
     private RecyclerView mVideosRecyclerView;
     private ProgressBar mProgressBar;
+    private VideosAdapter mAdapter;
 
     public VideosFragment() {
         // Required empty public constructor
@@ -57,6 +58,8 @@ public class VideosFragment extends Fragment implements AsyncTaskDelegate {
                     new LinearLayoutManager(getActivity(),
                             LinearLayoutManager.HORIZONTAL, false)
             );
+            mVideosRecyclerView.setNestedScrollingEnabled(false);
+            mVideosRecyclerView.setAdapter(mAdapter);
 
             mProgressBar = (ProgressBar) view.findViewById(R.id.spinner_progress);
 
@@ -95,7 +98,8 @@ public class VideosFragment extends Fragment implements AsyncTaskDelegate {
     public void onProcessFinish(Object output, String taskType) {
         if (output != null) {
             List<Video> videos = (List<Video>) output;
-            mVideosRecyclerView.setAdapter(new VideosAdapter(getActivity(), videos));
+            mAdapter = new VideosAdapter(getActivity(), videos);
+            mVideosRecyclerView.setAdapter(mAdapter);
             mProgressBar.setVisibility(View.GONE);
         }
     }

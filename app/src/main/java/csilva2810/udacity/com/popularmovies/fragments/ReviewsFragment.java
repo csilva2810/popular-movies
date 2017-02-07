@@ -28,6 +28,7 @@ public class ReviewsFragment extends Fragment implements AsyncTaskDelegate {
 
     private RecyclerView mReviewsRecyclerView;
     private ProgressBar mProgressBar;
+    private ReviewsAdapter mAdapter;
 
     public ReviewsFragment() {
         // Required empty public constructor
@@ -63,6 +64,7 @@ public class ReviewsFragment extends Fragment implements AsyncTaskDelegate {
                             LinearLayoutManager.VERTICAL, false)
             );
             mReviewsRecyclerView.setNestedScrollingEnabled(false);
+            mReviewsRecyclerView.setAdapter(mAdapter);
 
             mProgressBar = (ProgressBar) view.findViewById(R.id.spinner_progress);
 
@@ -99,7 +101,8 @@ public class ReviewsFragment extends Fragment implements AsyncTaskDelegate {
     @Override
     public void onProcessFinish(Object output, String taskType) {
         List<Review> reviews = (List<Review>) output;
-        mReviewsRecyclerView.setAdapter(new ReviewsAdapter(getActivity(), reviews));
+        mAdapter = new ReviewsAdapter(getActivity(), reviews);
+        mReviewsRecyclerView.setAdapter(mAdapter);
         mProgressBar.setVisibility(View.GONE);
     }
 
