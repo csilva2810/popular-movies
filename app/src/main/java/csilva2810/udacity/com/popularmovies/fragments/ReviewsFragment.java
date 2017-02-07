@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class ReviewsFragment extends Fragment implements AsyncTaskDelegate {
     private RecyclerView mReviewsRecyclerView;
     private ProgressBar mProgressBar;
     private ReviewsAdapter mAdapter;
+    private TextView mNoReviewsTextView;
 
     public ReviewsFragment() {
         // Required empty public constructor
@@ -56,6 +58,8 @@ public class ReviewsFragment extends Fragment implements AsyncTaskDelegate {
         if (args != null) {
 
             mMovieId = args.getLong(MovieDetailsActivity.ARG_MOVIEID);
+
+            mNoReviewsTextView = (TextView) view.findViewById(R.id.no_reviews_textview);
 
             mReviewsRecyclerView = (RecyclerView) view.findViewById(R.id.reviews_recyclerview);
             mReviewsRecyclerView.setHasFixedSize(true);
@@ -100,10 +104,19 @@ public class ReviewsFragment extends Fragment implements AsyncTaskDelegate {
 
     @Override
     public void onProcessFinish(Object output, String taskType) {
-        List<Review> reviews = (List<Review>) output;
-        mAdapter = new ReviewsAdapter(getActivity(), reviews);
-        mReviewsRecyclerView.setAdapter(mAdapter);
-        mProgressBar.setVisibility(View.GONE);
+        if (output != null) {
+            List<Review> reviews = (List<Review>) output;
+            if (reviews.size() > 0) {
+                mAdapter = new ReviewsAdapter(getActivity(), reviews);
+                mReviewsRecyclerView.setAdapter(mAdapter);
+                mProgressBar.setVisibility(View.GONE);
+                mNoReviewsTextView.setVisibility(View.GONE);
+            } else {
+                mReviewsRecyclerView.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.GONE);
+                mNoReviewsTextView.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
 }

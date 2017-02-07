@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class VideosFragment extends Fragment implements AsyncTaskDelegate {
     private RecyclerView mVideosRecyclerView;
     private ProgressBar mProgressBar;
     private VideosAdapter mAdapter;
+    private TextView mNoVideosTextView;
 
     public VideosFragment() {
         // Required empty public constructor
@@ -51,6 +53,8 @@ public class VideosFragment extends Fragment implements AsyncTaskDelegate {
         if (args != null) {
 
             mMovieId = args.getLong(MovieDetailsActivity.ARG_MOVIEID);
+
+            mNoVideosTextView = (TextView) view.findViewById(R.id.no_videos_textview);
 
             mVideosRecyclerView = (RecyclerView) view.findViewById(R.id.videos_recyclerview);
             mVideosRecyclerView.setHasFixedSize(true);
@@ -98,9 +102,16 @@ public class VideosFragment extends Fragment implements AsyncTaskDelegate {
     public void onProcessFinish(Object output, String taskType) {
         if (output != null) {
             List<Video> videos = (List<Video>) output;
-            mAdapter = new VideosAdapter(getActivity(), videos);
-            mVideosRecyclerView.setAdapter(mAdapter);
-            mProgressBar.setVisibility(View.GONE);
+            if (videos.size() > 0) {
+                mAdapter = new VideosAdapter(getActivity(), videos);
+                mVideosRecyclerView.setAdapter(mAdapter);
+                mProgressBar.setVisibility(View.GONE);
+                mNoVideosTextView.setVisibility(View.GONE);
+            } else {
+                mProgressBar.setVisibility(View.GONE);
+                mVideosRecyclerView.setVisibility(View.GONE);
+                mNoVideosTextView.setVisibility(View.VISIBLE);
+            }
         }
     }
 }

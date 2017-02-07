@@ -45,5 +45,7 @@
     <string name="api_poster_size">w342/</string>
     <string name="api_backdrop_size">w780/</string>
     <string name="transition_movie_cover">MovieCover</string>
+    <string name="no_videos">No Videos for This Movie</string>
+    <string name="no_reviews">No Reviews for This Movie</string>
 
 </resources>
