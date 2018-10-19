@@ -9,11 +9,11 @@ This is my Popular Movies App. Wich I have been developing as part of [Udacity's
 
 ## Screenshots
 
-![elementary](https://raw.githubusercontent.com/csilva2810/popular-movies/master/demo/pop01.png)
-![elementary](https://raw.githubusercontent.com/csilva2810/popular-movies/master/demo/pop02.png)
-![elementary](https://raw.githubusercontent.com/csilva2810/popular-movies/master/demo/pop03.png)
-![elementary](https://raw.githubusercontent.com/csilva2810/popular-movies/master/demo/pop04.png)
-![elementary](https://raw.githubusercontent.com/csilva2810/popular-movies/master/demo/pop05.png)
-![elementary](https://raw.githubusercontent.com/csilva2810/popular-movies/master/demo/pop06.png)
+![elementary](https://raw.githubusercontent.com/csilva2810/popular-movies/master/demo/pop01.jpg)
+![elementary](https://raw.githubusercontent.com/csilva2810/popular-movies/master/demo/pop02.jpg)
+![elementary](https://raw.githubusercontent.com/csilva2810/popular-movies/master/demo/pop03.jpg)
+![elementary](https://raw.githubusercontent.com/csilva2810/popular-movies/master/demo/pop04.jpg)
+![elementary](https://raw.githubusercontent.com/csilva2810/popular-movies/master/demo/pop05.jpg)
+![elementary](https://raw.githubusercontent.com/csilva2810/popular-movies/master/demo/pop06.jpg)
 
 [High Resolution Screenshots](https://drive.google.com/open?id=0B6V59wvTTzyWYXBObS1ESWp1WEk)
